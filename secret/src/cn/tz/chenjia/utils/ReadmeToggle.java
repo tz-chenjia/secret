@@ -2,7 +2,7 @@ package cn.tz.chenjia.utils;
 
 public class ReadmeToggle {
 
-    private static final String README = "jar";
+    private static final String README = "ja1r";
 
     public static boolean isJar() {
         return README.equals("jar");
