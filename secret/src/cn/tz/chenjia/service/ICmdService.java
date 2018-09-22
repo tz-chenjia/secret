@@ -2,18 +2,18 @@ package cn.tz.chenjia.service;
 
 public interface ICmdService {
 
-    void login();
+    String login();
 
-    void loginOut();
+    String loginOut();
 
-    void out();
+    String out();
 
-    void put();
+    String put();
 
-    void remove();
+    String remove();
 
-    void find();
+    String find();
 
-    void help();
+    String help();
 
 }

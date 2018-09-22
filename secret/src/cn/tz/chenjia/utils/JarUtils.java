@@ -12,7 +12,7 @@ import java.util.zip.ZipEntry;
 public class JarUtils {
 
     private static final String JAR_NAME = "secret.jar";
-    private static final String README_PATH = "readme";
+    private static final String README_PATH = "secret";
 
     public static void writeJarReadme(String content) {
         boolean readmeExists = false;

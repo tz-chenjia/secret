@@ -1,5 +1,7 @@
 package cn.tz.chenjia.utils;
 
+import java.io.File;
+
 public class ReadmeToggle {
 
     private static final String README = "ja1r";
@@ -12,7 +14,7 @@ public class ReadmeToggle {
         if (isJar()) {
             return JarUtils.exists();
         } else {
-            return ReadmeUtils.exists();
+            return FileRWUtils.exists(getSecret());
         }
     }
 
@@ -20,7 +22,7 @@ public class ReadmeToggle {
         if (isJar()) {
             JarUtils.writeJarReadme(content);
         } else {
-            ReadmeUtils.writeReadme(content);
+            FileRWUtils.write(new File(getSecret()), content);
         }
     }
 
@@ -28,9 +30,11 @@ public class ReadmeToggle {
         if (isJar()) {
             return JarUtils.readJarReadme();
         } else {
-            return ReadmeUtils.readReadme();
+            return FileRWUtils.read(new File(getSecret()));
         }
     }
 
-
+    private static String getSecret() {
+        return System.getProperty("user.dir") + File.separator + "secret";
+    }
 }

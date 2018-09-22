@@ -4,10 +4,10 @@ import cn.tz.chenjia.rule.EMsg;
 
 import java.io.*;
 
-public class ReadmeUtils {
+public class FileRWUtils {
 
-    public static boolean exists() {
-        File file = new File(getReadme());
+    public static boolean exists(String filePath) {
+        File file = new File(filePath);
         if (file.exists()) {
             return true;
         } else {
@@ -20,7 +20,7 @@ public class ReadmeUtils {
         }
     }
 
-    private static String read(File file) {
+    public static String read(File file) {
         InputStreamReader isr = null;
         BufferedReader br = null;
         StringBuffer str = new StringBuffer();
@@ -52,7 +52,7 @@ public class ReadmeUtils {
         return str.toString();
     }
 
-    private static void write(File file, String content) {
+    public static void write(File file, String content) {
         BufferedWriter out = null;
         try {
             out = new BufferedWriter(new FileWriter(file));
@@ -71,19 +71,6 @@ public class ReadmeUtils {
             }
         }
 
-    }
-
-    public static String readReadme() {
-        String read = read(new File(getReadme()));
-        return read;
-    }
-
-    public static void writeReadme(String content) {
-        write(new File(getReadme()), content);
-    }
-
-    private static String getReadme() {
-        return System.getProperty("user.dir") + File.separator + "readme";
     }
 
     private static void handlingError(Throwable e){

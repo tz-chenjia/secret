@@ -1,19 +1,19 @@
 package cn.tz.chenjia.service;
 
+import cn.tz.chenjia.entity.Help;
 import cn.tz.chenjia.entity.User;
-import cn.tz.chenjia.rule.ERegexp;
-import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.rule.EMsg;
+import cn.tz.chenjia.rule.ERegexp;
+import cn.tz.chenjia.rule.ESymbol;
+import cn.tz.chenjia.ui.KVDialog;
+import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.utils.ReadmeToggle;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CmdSevrice implements ICmdService {
 
@@ -46,40 +46,52 @@ public class CmdSevrice implements ICmdService {
         cmdSevrice.run();
     }
 
-    public void run() {
+    public static String runCmdWithJForm(Commands command){
+        if (command == null) {
+            return EMsg.INVALID.toString();
+        }
+        CmdSevrice cmdSevrice = new CmdSevrice(command);
+        String run = cmdSevrice.run();
+        EMsg.println(run);
+        return run;
+    }
+
+    public String run() {
+        String r = "";
         switch (command) {
             case LOGINOUT:
-                loginOut();
+                r = loginOut();
                 break;
             case LOGIN:
-                login();
+                r = login();
                 break;
             case OUT:
-                out();
+                r = out();
                 break;
             case PUT:
-                put();
+                r = put();
                 break;
             case REMOVE:
-                remove();
+                r = remove();
                 break;
             case FIND:
-                find();
+                r = find();
                 break;
             case HELP:
-                help();
+                r =  help();
                 break;
         }
+        return r;
     }
 
     @Override
-    public void loginOut() {
+    public String loginOut() {
         User.getInstance().out();
-        EMsg.println(EMsg.LOGIN_OUT);
+        return EMsg.LOGIN_OUT.toString();
     }
 
     @Override
-    public void login() {
+    public String login() {
         String cmd = command.getInput();
         String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
         String name = strs[1];
@@ -88,53 +100,45 @@ public class CmdSevrice implements ICmdService {
         name = EncryptUtils.encrypt(name, password, n);
         password = EncryptUtils.encrypt(password, password, n);
         if (User.getInstance().isOnline()) {
-            EMsg.println(EMsg.ONLINE);
+            return EMsg.ONLINE.toString();
         } else {
             if (User.getInstance().login(name, password, n)) {
-                EMsg.println(EMsg.LOGIN_OK);
+                return EMsg.LOGIN_OK.toString();
             } else {
-                EMsg.println(EMsg.LOGIN_NO);
+                return EMsg.LOGIN_NO.toString();
             }
         }
     }
 
-    @Override
-    public void out() {
-        EMsg.println(EMsg.BYE);
-        EMsg.println(EMsg.OUT);
-        System.exit(1);
-    }
-
-    @Override
-    public void put() {
-        Map<String, String> infoMap = new HashMap<String, String>();
-        String code;
-        String input;
-        EMsg.println(EMsg.IN_CODE);
-        code = input();
-        do {
-            EMsg.println(EMsg.IN_K_V);
-            input = input();
-            if (input.matches(ERegexp.KV_RE.toString())) {
-                String[] strs = input.split(ERegexp.SPACE_RE.toString());
-                String key = strs[0];
-                String value = strs[1];
-                infoMap.put(key, value);
-            } else if (input.equals("save")) {
-                String info = EncryptUtils.encrypt(JSON.toJSONString(infoMap), User.getInstance().getPwd(), User.getInstance().getN());
-                updateInfo(code, info);
-                infoMap.clear();
-                EMsg.println(EMsg.PUT_OK);
-            } else if (input.equals("esc")) {
-                infoMap.clear();
-            } else {
-                EMsg.println(EMsg.IN_F_ERROR);
+    public static boolean login(String name, String pwd, int n){
+        boolean r = false;
+        name = EncryptUtils.encrypt(name, pwd, n);
+        pwd = EncryptUtils.encrypt(pwd, pwd, n);
+        if (User.getInstance().isOnline()) {
+            r = true;
+        } else {
+            if (User.getInstance().login(name, pwd, n)) {
+                r = true;
             }
-        } while (input.matches(ERegexp.KV_RE.toString()) || !input.matches(ERegexp.ESC_RE.toString()));
+        }
+        return r;
     }
 
     @Override
-    public void remove() {
+    public String out() {
+        return EMsg.OUT.toString();
+    }
+
+    @Override
+    public String put() {
+        KVDialog dialog = new KVDialog();
+        dialog.pack();
+        dialog.setVisible(true);
+        return EMsg.PUT_OK.toString();
+    }
+
+    @Override
+    public String remove() {
         String cmd = command.getInput();
         String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
         if (strs.length == 2) {
@@ -142,7 +146,7 @@ public class CmdSevrice implements ICmdService {
         } else {
             removeInfo(null);
         }
-        EMsg.println(EMsg.REMOVE_OK);
+       return EMsg.REMOVE_OK.toString();
     }
 
     private void removeInfo(String code) {
@@ -166,16 +170,16 @@ public class CmdSevrice implements ICmdService {
                 }
             }
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE.toString() + str[1] + ERegexp.SEMICOLON_RE.toString() + str[2] + ERegexp.SEMICOLON_RE.toString() +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString() + str[2] + ESymbol.SEMICOLON.toString() +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         } else {
             JSONArray ja = new JSONArray();
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE.toString() + str[1] + ERegexp.SEMICOLON_RE.toString() + str[2] + ERegexp.SEMICOLON_RE.toString() +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString() + str[2] + ESymbol.SEMICOLON.toString() +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         }
         ReadmeToggle.write(r);
     }
 
-    private void updateInfo(String code, String info) {
+    public static void updateInfo(String code, String info) {
         boolean ok = false;
         String readme = ReadmeToggle.read();
         String[] str = readme.split(ERegexp.SEMICOLON_RE.toString());
@@ -200,7 +204,7 @@ public class CmdSevrice implements ICmdService {
                 ja.add(jo);
             }
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE.toString() + str[1] + ERegexp.SEMICOLON_RE.toString()+ str[2] + ERegexp.SEMICOLON_RE.toString() + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString()+ str[2] + ESymbol.SEMICOLON.toString() + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         } else {
             JSONArray ja = new JSONArray();
             JSONObject jo = new JSONObject();
@@ -208,51 +212,59 @@ public class CmdSevrice implements ICmdService {
             jo.put("info", info);
             ja.add(jo);
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE.toString() + str[1] + ERegexp.SEMICOLON_RE.toString() + str[2] + ERegexp.SEMICOLON_RE.toString() + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString() + str[2] + ESymbol.SEMICOLON.toString() + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         }
         ReadmeToggle.write(r);
     }
 
     @Override
-    public void find() {
+    public String find() {
         String cmd = command.getInput();
         String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
         if (strs.length == 2) {
-            EMsg.println(findRecord(strs[1]));
+            return findRecord(strs[1]);
+        }else {
+            return findRecord(null);
         }
-        EMsg.println(findRecord(null));
     }
 
     private String findRecord(String code) {
         String readme = ReadmeToggle.read();
         String[] str = readme.split(ERegexp.SEMICOLON_RE.toString());
-        String result = "[]";
+        String result = "";
         if (str.length > 3) {
             String r = str[3];
             r = EncryptUtils.decrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
             JSONArray ja = JSONObject.parseArray(r);
-            for (int i = 0; i < ja.size(); i++) {
-                JSONObject jo = ja.getJSONObject(i);
-                if (code == null || code.equals("")) {
-                    jo.put("info", EncryptUtils.decrypt(jo.getString("info"), User.getInstance().getPwd(), User.getInstance().getN()));
-                } else {
+            if (code == null || code.equals("")) {
+                for (int i = 0; i < ja.size(); i++) {
+                    JSONObject jo = ja.getJSONObject(i);
+                    String c = jo.getString("code");
+                    //String info = EncryptUtils.decrypt(jo.getString("info"), User.getInstance().getPwd(), User.getInstance().getN());
+                    result += c + "\n";
+                }
+            }else{
+                for (int i = 0; i < ja.size(); i++) {
+                    JSONObject jo = ja.getJSONObject(i);
                     String c = jo.getString("code");
                     if (c.equals(code)) {
-                        jo.put("info", EncryptUtils.decrypt(jo.getString("info"), User.getInstance().getPwd(), User.getInstance().getN()));
-                        result = JSONObject.toJSONString(jo);
+                        result = c + ":\n" + jo.getString("info");
                         break;
                     }
                 }
-            }
-            if (code == null || code.equals("")) {
-                result = JSONObject.toJSONString(ja);
             }
         }
         return result;
     }
 
     @Override
-    public void help() {
-        return;
+    public String help() {
+        String cmd = command.getInput();
+        String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
+        if (strs.length == 2) {
+            return Help.getInstance().findSingleHelp(strs[1]);
+        }else {
+            return Help.getInstance().findAllHelp();
+        }
     }
 }
