@@ -174,11 +174,11 @@ public class CmdSevrice implements ICmdService {
                 }
             }
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString() + str[2] + ESymbol.SEMICOLON.toString() +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         } else {
             JSONArray ja = new JSONArray();
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString() + str[2] + ESymbol.SEMICOLON.toString() +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         }
         ReadmeToggle.write(r);
     }
@@ -208,7 +208,7 @@ public class CmdSevrice implements ICmdService {
                 ja.add(jo);
             }
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString()+ str[2] + ESymbol.SEMICOLON.toString() + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         } else {
             JSONArray ja = new JSONArray();
             JSONObject jo = new JSONObject();
@@ -216,7 +216,7 @@ public class CmdSevrice implements ICmdService {
             jo.put("info", info);
             ja.add(jo);
             r = JSONObject.toJSONString(ja);
-            r = str[0] + ESymbol.SEMICOLON.toString() + str[1] + ESymbol.SEMICOLON.toString() + str[2] + ESymbol.SEMICOLON.toString() + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
         }
         ReadmeToggle.write(r);
     }

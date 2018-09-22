@@ -18,6 +18,7 @@ public class ConfigsUtils {
     }
 
     public static File getSingleConf(String conf){
+        System.out.println(getConfPath() + conf);
         File file = new File(getConfPath() + conf);
         if(file.exists()){
             return  file;

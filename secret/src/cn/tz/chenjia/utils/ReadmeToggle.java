@@ -8,7 +8,7 @@ public class ReadmeToggle {
 
     private static final String SECRET_FILE_NAME="secret";
 
-    private static final String README = "ja1r";
+    private static final String README = "jpar";
 
     public static boolean isJar() {
         return README.equals("jar");
