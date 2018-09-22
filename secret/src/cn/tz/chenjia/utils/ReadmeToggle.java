@@ -1,8 +1,12 @@
 package cn.tz.chenjia.utils;
 
+import cn.tz.chenjia.configs.ConfigsUtils;
+
 import java.io.File;
 
 public class ReadmeToggle {
+
+    private static final String SECRET_FILE_NAME="secret";
 
     private static final String README = "ja1r";
 
@@ -35,6 +39,6 @@ public class ReadmeToggle {
     }
 
     private static String getSecret() {
-        return System.getProperty("user.dir") + File.separator + "secret";
+        return ConfigsUtils.getRootPath() + SECRET_FILE_NAME;
     }
 }

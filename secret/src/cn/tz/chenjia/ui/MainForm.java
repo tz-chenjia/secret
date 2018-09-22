@@ -1,7 +1,8 @@
 package cn.tz.chenjia.ui;
 
-import cn.tz.chenjia.configs.ImagesConfig;
+import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.rule.EMsg;
+import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.rule.ESymbol;
 import cn.tz.chenjia.service.CmdSevrice;
 import cn.tz.chenjia.service.Commands;
@@ -21,7 +22,7 @@ public class MainForm extends JFrame{
         setSize(580, 540);
         setResizable(false);
         setLocationRelativeTo(mainJPanel);
-        setIconImage(ImagesConfig.getLogo());
+        setIconImage(ConfigsUtils.getLogo());
         pack();
         setVisible(true);
         super.addWindowListener(new WindowAdapter() {
@@ -33,6 +34,7 @@ public class MainForm extends JFrame{
             @Override
             public void windowOpened(WindowEvent e) {
                 cmdText.requestFocus();
+                sessionTextArea.setText(EMsg.HELLO.toString());
                 statusLabel.setText( userName + EMsg.WELCOME);
             }
         });
@@ -40,17 +42,21 @@ public class MainForm extends JFrame{
             @Override
             public void keyPressed(KeyEvent e) {
                 if(KeyEvent.VK_ENTER == e.getKeyCode()){
-                    String cmd = cmdText.getText().trim();
-                    if(cmd.equalsIgnoreCase("o") || cmd.equalsIgnoreCase("out")){
+                    String cmd = cmdText.getText().trim().toLowerCase();
+                    if(cmd.matches(ERegexp.CMD_CLEAR_RE.toString())){
+                        sessionTextArea.setText("");
+                    }if(cmd.matches(ERegexp.CMD_OUT_RE.toString())){
                         dispose();
                         System.exit(1);
-                    }else if(cmd.equalsIgnoreCase("lo") || cmd.equalsIgnoreCase("loginout")){
+                    }else if(cmd.matches(ERegexp.CMD_LOGINOUT_RE.toString())){
                         CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
                         new LoginForm();
                         dispose();
                     }else{
                         String r = CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
-                        sessionTextArea.append(ESymbol.BORDER + "\n" + r + "\n");
+                        if(r != null && !r.equals("")) {
+                            sessionTextArea.append("\n" + ESymbol.SESSION_BORDER + "\n" + r + "\n");
+                        }
                     }
                     cmdText.setText("");
                 }

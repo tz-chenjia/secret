@@ -1,33 +1,31 @@
 package cn.tz.chenjia.ui;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
-import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.service.CmdSevrice;
 
 import javax.swing.*;
 import java.awt.event.*;
 
-public class KVDialog extends JDialog {
+public class RemoveDialog extends JDialog {
     private JPanel contentPane;
-    private JButton saveBtn;
+    private JButton buttonOK;
     private JButton buttonCancel;
-    private JTextField titleText;
-    private JTextArea contentTextArea;
-    private JPanel jPanel1;
-    private JPanel mainJPanel;
-    private JScrollPane jScrollPane;
-    private JPanel statusJPanel;
-    private JLabel statusLabel;
+    private JLabel label;
+    private String code;
 
-    public KVDialog() {
+    public RemoveDialog(String code) {
+        String title = code == null ? "确定删除全部数据？" : "确定删除 【" + code + "】？";
         setTitle("Secret");
+        label.setText(title);
         setContentPane(contentPane);
+        setModal(true);
+        setIconImage(ConfigsUtils.getLogo());
+        getRootPane().setDefaultButton(buttonOK);
         setSize(400,300);
         setLocationRelativeTo(contentPane);
-        setModal(true);
-        getRootPane().setDefaultButton(saveBtn);
-        setIconImage(ConfigsUtils.getLogo());
-        saveBtn.addActionListener(new ActionListener() {
+        setResizable(false);
+
+        buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
             }
@@ -56,20 +54,11 @@ public class KVDialog extends JDialog {
     }
 
     private void onOK() {
-        String title = titleText.getText().trim();
-        String content = contentTextArea.getText().trim();
-
-        if(title.equals("") || content.equals("")){
-            statusLabel.setText(EMsg.ERROR_KV.toString());
-        }else{
-            CmdSevrice.updateInfo(title, content);
-            dispose();
-        }
-    }
-
-    private void onCancel() {
-        // add your code here if necessary
+        CmdSevrice.removeInfo(code);
         dispose();
     }
 
+    private void onCancel() {
+        dispose();
+    }
 }

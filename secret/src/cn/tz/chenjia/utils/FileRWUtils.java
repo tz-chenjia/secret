@@ -25,7 +25,7 @@ public class FileRWUtils {
         BufferedReader br = null;
         StringBuffer str = new StringBuffer();
         try {
-            isr = new InputStreamReader(new FileInputStream(file));
+            isr = new InputStreamReader(new FileInputStream(file), "utf-8");
             br = new BufferedReader(isr);
             String lineStr;
             while ((lineStr = br.readLine()) != null) {

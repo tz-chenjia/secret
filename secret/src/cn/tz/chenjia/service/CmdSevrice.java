@@ -6,6 +6,7 @@ import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.rule.ESymbol;
 import cn.tz.chenjia.ui.KVDialog;
+import cn.tz.chenjia.ui.RemoveDialog;
 import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.utils.ReadmeToggle;
 import com.alibaba.fastjson.JSONArray;
@@ -134,22 +135,25 @@ public class CmdSevrice implements ICmdService {
         KVDialog dialog = new KVDialog();
         dialog.pack();
         dialog.setVisible(true);
-        return EMsg.PUT_OK.toString();
+        return "";
     }
 
     @Override
     public String remove() {
         String cmd = command.getInput();
         String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
+        RemoveDialog dialog = null;
         if (strs.length == 2) {
-            removeInfo(strs[1]);
+            dialog = new RemoveDialog(strs[1]);
         } else {
-            removeInfo(null);
+            dialog = new RemoveDialog(null);
         }
-       return EMsg.REMOVE_OK.toString();
+        dialog.pack();
+        dialog.setVisible(true);
+        return "";
     }
 
-    private void removeInfo(String code) {
+    public static void removeInfo(String code) {
         String readme = ReadmeToggle.read();
         String[] str = readme.split(ERegexp.SEMICOLON_RE.toString());
         String r;
@@ -240,20 +244,21 @@ public class CmdSevrice implements ICmdService {
                 for (int i = 0; i < ja.size(); i++) {
                     JSONObject jo = ja.getJSONObject(i);
                     String c = jo.getString("code");
-                    //String info = EncryptUtils.decrypt(jo.getString("info"), User.getInstance().getPwd(), User.getInstance().getN());
-                    result += c + "\n";
+                    String info = jo.getString("info");
+                    result += ESymbol.BORDER + "\n" + "【" + c + "】\n\n" + info + "\n";
                 }
             }else{
                 for (int i = 0; i < ja.size(); i++) {
                     JSONObject jo = ja.getJSONObject(i);
                     String c = jo.getString("code");
-                    if (c.equals(code)) {
-                        result = c + ":\n" + jo.getString("info");
-                        break;
+                    if (c.toLowerCase().contains(code.toLowerCase())) {
+                        String info = jo.getString("info");
+                        result += ESymbol.BORDER + "\n" + "【" + c + "】\n\n" + info + "\n";
                     }
                 }
             }
         }
+        result = result.equals("") ? EMsg.INFO_NOT.toString() : result;
         return result;
     }
 

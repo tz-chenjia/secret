@@ -1,6 +1,6 @@
 package cn.tz.chenjia.ui;
 
-import cn.tz.chenjia.configs.ImagesConfig;
+import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.service.CmdSevrice;
 
 import javax.swing.*;
@@ -10,10 +10,10 @@ public class LoginForm extends JFrame {
     public LoginForm() {
         setTitle("Secret");
         setContentPane(mainJPanel);
-        setSize(200,100);
+        setSize(200,130);
         setLocationRelativeTo(mainJPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setIconImage(ImagesConfig.getLogo());
+        setIconImage(ConfigsUtils.getLogo());
         setResizable(false);
         pack();
         setVisible(true);

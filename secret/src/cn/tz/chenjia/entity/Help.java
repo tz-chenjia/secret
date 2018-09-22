@@ -1,11 +1,11 @@
 package cn.tz.chenjia.entity;
 
+import cn.tz.chenjia.configs.ConfigsUtils;
+import cn.tz.chenjia.rule.ESymbol;
 import cn.tz.chenjia.utils.FileRWUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class Help {
 
     private List<HelpInfo> readConf(){
         List<HelpInfo> helps = new ArrayList<HelpInfo>();
-        String helpsStr = FileRWUtils.read(new File(getHelpConf()));
+        String helpsStr = FileRWUtils.read(ConfigsUtils.getSingleConf("help"));
         JSONArray ja = JSONObject.parseArray(helpsStr);
         for(int i=0 ; i<ja.size(); i++){
             JSONObject jo = ja.getJSONObject(i);
@@ -63,15 +63,9 @@ public class Help {
         String r = "";
         for(HelpInfo info : helps){
             String code = info.getCode();
-            code = String.format("%-20s",code);
-            r += code + info.getResume() + "\n";
+            r += ESymbol.BORDER + "\n" + info.getResume() + "\n" +code +"\n" + info.getDescription() + "\n\n";
         }
         return r;
-    }
-
-    private String getHelpConf() {
-        URL helpConf = this.getClass().getResource("../resource/help.conf");
-        return helpConf.getPath();
     }
 }
 class HelpInfo{

@@ -5,7 +5,7 @@ import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 
 public enum Commands {
-    LOGIN, LOGINOUT, OUT, PUT, REMOVE, FIND, HELP;
+    LOGIN, LOGINOUT, OUT, PUT, REMOVE, FIND, CLEAR, HELP;
 
     private String input;
 
@@ -32,6 +32,8 @@ public enum Commands {
             return onlineCmd(REMOVE);
         } else if (input.matches(ERegexp.CMD_FIND_RE.toString())) {
             return onlineCmd(FIND);
+        }else if (input.matches(ERegexp.CMD_CLEAR_RE.toString())) {
+            return CLEAR;
         }
         EMsg.println(EMsg.INVALID);
         return null;
