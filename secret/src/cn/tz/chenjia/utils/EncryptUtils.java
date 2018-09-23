@@ -1,6 +1,5 @@
 package cn.tz.chenjia.utils;
 
-import cn.tz.chenjia.rule.EMsg;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.*;
@@ -31,17 +30,17 @@ public class EncryptUtils {
             cipher.init(1, secretKeySpec);
             bytes = cipher.doFinal(data.getBytes("UTF-8"));
         } catch (NoSuchAlgorithmException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (NoSuchPaddingException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (BadPaddingException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (InvalidKeyException e) {
-            handlingError(e);
+            e.printStackTrace();
         }
         return Base64.encodeBase64String(bytes);
     }
@@ -57,21 +56,21 @@ public class EncryptUtils {
             cipher.init(2, secretKeySpec);
             bytes = cipher.doFinal(Base64.decodeBase64(data));
         } catch (NoSuchAlgorithmException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (NoSuchPaddingException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (BadPaddingException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (IllegalBlockSizeException e) {
-            handlingError(e);
+            e.printStackTrace();
         } catch (InvalidKeyException e) {
-            handlingError(e);
+            e.printStackTrace();
         }
         String r = null;
         try {
             r = new String(bytes, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            handlingError(e);
+            e.printStackTrace();
         }
         return r;
     }
@@ -82,7 +81,7 @@ public class EncryptUtils {
             bytes = encrypted.getBytes("ISO8859-1");
             bytes = Arrays.copyOf(bytes, 16);
         } catch (UnsupportedEncodingException e) {
-            handlingError(e);
+            e.printStackTrace();
         }
         return Base64.encodeBase64String(bytes);
     }
@@ -103,11 +102,6 @@ public class EncryptUtils {
             r = encrypt(data, secrtKey);
         }
         return r;
-    }
-
-    private static void handlingError(Throwable e){
-        EMsg.println(e.getMessage());
-        System.exit(1);
     }
 
 }

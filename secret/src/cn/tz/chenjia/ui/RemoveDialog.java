@@ -1,7 +1,6 @@
 package cn.tz.chenjia.ui;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
-import cn.tz.chenjia.service.CmdSevrice;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -11,7 +10,7 @@ public class RemoveDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JLabel label;
-    private String code;
+    private ICallback callback;
 
     public RemoveDialog(String code) {
         String title = code == null ? "确定删除全部数据？" : "确定删除 【" + code + "】？";
@@ -53,12 +52,17 @@ public class RemoveDialog extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+    public void setCallback(ICallback callback) {
+        this.callback = callback;
+    }
+
     private void onOK() {
-        CmdSevrice.removeInfo(code);
+        callback.isRemove(true);
         dispose();
     }
 
     private void onCancel() {
+        callback.isRemove(false);
         dispose();
     }
 }

@@ -5,6 +5,7 @@ import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.rule.ESymbol;
+import cn.tz.chenjia.ui.ICallback;
 import cn.tz.chenjia.ui.KVDialog;
 import cn.tz.chenjia.ui.RemoveDialog;
 import cn.tz.chenjia.utils.EncryptUtils;
@@ -12,39 +13,12 @@ import cn.tz.chenjia.utils.ReadmeToggle;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-public class CmdSevrice implements ICmdService {
+public class CmdSevrice implements ICmdService, ICallback {
 
     private Commands command;
 
     private CmdSevrice(Commands command) {
         this.command = command;
-    }
-
-    public static String input() {
-        String content = "";
-        try {
-            do {
-                EMsg.println(EMsg.INPUT);
-                content = new BufferedReader(new InputStreamReader(System.in)).readLine().trim();
-            } while (content == null || content.equals(""));
-        } catch (IOException e) {
-            EMsg.println(e.getMessage());
-            System.exit(1);
-        }
-        return content;
-    }
-
-    public static void runCmd(Commands command) {
-        if (command == null) {
-            runCmd(Commands.toCmd(input()));
-            return;
-        }
-        CmdSevrice cmdSevrice = new CmdSevrice(command);
-        cmdSevrice.run();
     }
 
     public static String runCmdWithJForm(Commands command){
@@ -53,7 +27,6 @@ public class CmdSevrice implements ICmdService {
         }
         CmdSevrice cmdSevrice = new CmdSevrice(command);
         String run = cmdSevrice.run();
-        EMsg.println(run);
         return run;
     }
 
@@ -145,8 +118,10 @@ public class CmdSevrice implements ICmdService {
         RemoveDialog dialog = null;
         if (strs.length == 2) {
             dialog = new RemoveDialog(strs[1]);
+            dialog.setCallback(CmdSevrice.this);
         } else {
             dialog = new RemoveDialog(null);
+            dialog.setCallback(CmdSevrice.this);
         }
         dialog.pack();
         dialog.setVisible(true);
@@ -154,13 +129,11 @@ public class CmdSevrice implements ICmdService {
     }
 
     public static void removeInfo(String code) {
-        String readme = ReadmeToggle.read();
-        String[] str = readme.split(ERegexp.SEMICOLON_RE.toString());
-        String r;
-        if (str.length > 3) {
-            r = str[3];
-            r = EncryptUtils.decrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
-            JSONArray ja = JSONObject.parseArray(r);
+        JSONObject secretJO = ReadmeToggle.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        String data = secretJO.getString("data");
+        if(!data.equals("")){
+            data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
+            JSONArray ja = JSONObject.parseArray(data);
             if (code == null || code.equals("")) {
                 ja.clear();
             } else {
@@ -173,25 +146,22 @@ public class CmdSevrice implements ICmdService {
                     }
                 }
             }
-            r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
-        } else {
+            data = ja.toJSONString();
+        }else {
             JSONArray ja = new JSONArray();
-            r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE +  EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            data = ja.toJSONString();
         }
-        ReadmeToggle.write(r);
+        secretJO.put("data", EncryptUtils.encrypt(data,  User.getInstance().getPwd(), User.getInstance().getN()));
+        ReadmeToggle.write(EncryptUtils.encrypt(secretJO.toJSONString(), User.getInstance().getPwd(), User.getInstance().getN()));
     }
 
     public static void updateInfo(String code, String info) {
         boolean ok = false;
-        String readme = ReadmeToggle.read();
-        String[] str = readme.split(ERegexp.SEMICOLON_RE.toString());
-        String r;
-        if (str.length > 3) {
-            r = str[3];
-            r = EncryptUtils.decrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
-            JSONArray ja = JSONObject.parseArray(r);
+        JSONObject secretJO = ReadmeToggle.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        String data = secretJO.getString("data");
+        if(!data.equals("")){
+            data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
+            JSONArray ja = JSONObject.parseArray(data);
             for (int i = 0; i < ja.size(); i++) {
                 JSONObject jo = ja.getJSONObject(i);
                 String c = jo.getString("code");
@@ -207,18 +177,17 @@ public class CmdSevrice implements ICmdService {
                 jo.put("info", info);
                 ja.add(jo);
             }
-            r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
-        } else {
+            data = ja.toJSONString();
+        }else{
             JSONArray ja = new JSONArray();
             JSONObject jo = new JSONObject();
             jo.put("code", code);
             jo.put("info", info);
             ja.add(jo);
-            r = JSONObject.toJSONString(ja);
-            r = str[0] + ERegexp.SEMICOLON_RE + str[1] + ERegexp.SEMICOLON_RE + str[2] + ERegexp.SEMICOLON_RE + EncryptUtils.encrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
+            data = ja.toJSONString();
         }
-        ReadmeToggle.write(r);
+        secretJO.put("data", EncryptUtils.encrypt(data, User.getInstance().getPwd(), User.getInstance().getN()));
+        ReadmeToggle.write(EncryptUtils.encrypt(secretJO.toJSONString(), User.getInstance().getPwd(), User.getInstance().getN()));
     }
 
     @Override
@@ -233,13 +202,12 @@ public class CmdSevrice implements ICmdService {
     }
 
     private String findRecord(String code) {
-        String readme = ReadmeToggle.read();
-        String[] str = readme.split(ERegexp.SEMICOLON_RE.toString());
         String result = "";
-        if (str.length > 3) {
-            String r = str[3];
-            r = EncryptUtils.decrypt(r, User.getInstance().getPwd(), User.getInstance().getN());
-            JSONArray ja = JSONObject.parseArray(r);
+        JSONObject secretJO = ReadmeToggle.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        String data = secretJO.getString("data");
+        if(!data.equals("")){
+            data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
+            JSONArray ja = JSONObject.parseArray(data);
             if (code == null || code.equals("")) {
                 for (int i = 0; i < ja.size(); i++) {
                     JSONObject jo = ja.getJSONObject(i);
@@ -257,6 +225,8 @@ public class CmdSevrice implements ICmdService {
                     }
                 }
             }
+        }else{
+
         }
         result = result.equals("") ? EMsg.INFO_NOT.toString() : result;
         return result;
@@ -270,6 +240,28 @@ public class CmdSevrice implements ICmdService {
             return Help.getInstance().findSingleHelp(strs[1]);
         }else {
             return Help.getInstance().findAllHelp();
+        }
+    }
+
+    @Override
+    public void isRemove(boolean ok) {
+        String cmd = command.getInput();
+        String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
+        if(ok){
+            if (strs.length == 2) {
+                removeInfo(strs[1]);
+            } else {
+                removeInfo(null);
+            }
+        }
+    }
+
+    @Override
+    public void isSave(boolean ok) {
+        if(ok){
+
+        }else {
+
         }
     }
 }

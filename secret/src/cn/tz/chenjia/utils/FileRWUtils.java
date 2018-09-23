@@ -1,7 +1,5 @@
 package cn.tz.chenjia.utils;
 
-import cn.tz.chenjia.rule.EMsg;
-
 import java.io.*;
 
 public class FileRWUtils {
@@ -14,7 +12,7 @@ public class FileRWUtils {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                handlingError(e);
+                e.printStackTrace();
             }
             return false;
         }
@@ -32,20 +30,20 @@ public class FileRWUtils {
                 str.append(lineStr);
             }
         } catch (IOException e) {
-            handlingError(e);
+            e.printStackTrace();
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    handlingError(e);
+                    e.printStackTrace();
                 }
             }
             if (isr != null) {
                 try {
                     isr.close();
                 } catch (IOException e) {
-                    handlingError(e);
+                    e.printStackTrace();
                 }
             }
         }
@@ -60,22 +58,17 @@ public class FileRWUtils {
             out.flush(); // 把缓存区内容压入文件
             out.close(); // 最后记得关闭文件
         } catch (IOException e) {
-            handlingError(e);
+            e.printStackTrace();
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    handlingError(e);
+                    e.printStackTrace();
                 }
             }
         }
 
-    }
-
-    private static void handlingError(Throwable e){
-        EMsg.println(e.getMessage());
-        System.exit(1);
     }
 
 }

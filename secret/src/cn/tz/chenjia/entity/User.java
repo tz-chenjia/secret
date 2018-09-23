@@ -1,7 +1,8 @@
 package cn.tz.chenjia.entity;
 
-import cn.tz.chenjia.rule.ERegexp;
+import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.utils.ReadmeToggle;
+import com.alibaba.fastjson.JSONObject;
 
 public class User {
 
@@ -66,33 +67,37 @@ public class User {
         return user.isOnline();
     }
 
-    public boolean login(String name, String pwd, int n) {
+    public boolean login(String userName, String password, int n) {
+        JSONObject secretJO = null;
         if (ReadmeToggle.exists()) {
-            String readme = ReadmeToggle.read();
-            String[] strs = readme.split(ERegexp.SEMICOLON_RE.toString());
-            if (strs.length > 2) {
-                user.setName(name);
-                user.setPwd(pwd);
+            secretJO = ReadmeToggle.readSecret(password, 1);
+            if (secretJO != null) {
+                String joUserName = secretJO.getString("userName");
+                String joPassword = secretJO.getString("password");
+                Integer joN = Integer.valueOf(secretJO.getString("n"));
+                user.setName(userName);
+                user.setPwd(password);
                 user.setN(n);
-                if (strs[0].equals(name) && strs[1].equals(pwd) && Integer.valueOf(strs[2]) == n) {
+                if (joUserName.equals(userName) && joPassword.equals(password) && joN == n) {
                     user.setOnline(true);
                     return true;
                 } else {
                     user.setOnline(false);
                     return false;
                 }
-            } else {
-                user.setOnline(false);
-                return false;
             }
-        } else {
-            ReadmeToggle.write(name + ERegexp.SEMICOLON_RE.toString() + pwd + ERegexp.SEMICOLON_RE.toString()+ n + ERegexp.SEMICOLON_RE.toString());
-            user.setName(name);
-            user.setPwd(pwd);
-            user.setN(n);
-            user.setOnline(true);
-            return true;
         }
+        secretJO = new JSONObject();
+        secretJO.put("userName", userName);
+        secretJO.put("password", password);
+        secretJO.put("n", n);
+        secretJO.put("data", "");
+        ReadmeToggle.write(EncryptUtils.encrypt(JSONObject.toJSONString(secretJO), password, n));
+        user.setName(userName);
+        user.setPwd(password);
+        user.setN(n);
+        user.setOnline(true);
+        return true;
     }
 
     public void out() {

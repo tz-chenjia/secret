@@ -1,7 +1,6 @@
 package cn.tz.chenjia.service;
 
 import cn.tz.chenjia.entity.User;
-import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 
 public enum Commands {
@@ -35,7 +34,6 @@ public enum Commands {
         }else if (input.matches(ERegexp.CMD_CLEAR_RE.toString())) {
             return CLEAR;
         }
-        EMsg.println(EMsg.INVALID);
         return null;
     }
 
@@ -43,7 +41,6 @@ public enum Commands {
         if (User.getInstance().isOnline()) {
             return command;
         } else {
-            EMsg.println(EMsg.TIPS_LOGIN);
             return null;
         }
     }
