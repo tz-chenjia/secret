@@ -45,10 +45,10 @@ public class MainForm extends JFrame{
                     String cmd = cmdText.getText().trim().toLowerCase();
                     if(cmd.matches(ERegexp.CMD_CLEAR_RE.toString())){
                         sessionTextArea.setText("");
-                    }if(cmd.matches(ERegexp.CMD_OUT_RE.toString())){
+                    }else if(cmd.matches(ERegexp.CMD_OUT_RE.toString())){
                         dispose();
                         System.exit(1);
-                    }else if(cmd.matches(ERegexp.CMD_LOGINOUT_RE.toString())){
+                    }else if(cmd.matches(ERegexp.CMD_LOGINOUT_RE.toString()) || cmd.matches(ERegexp.CMD_FORMAT_RE.toString())){
                         CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
                         new LoginForm();
                         dispose();

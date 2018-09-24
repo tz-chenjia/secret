@@ -1,16 +1,18 @@
 package cn.tz.chenjia.service;
 
+import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.entity.Help;
 import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.rule.ESymbol;
 import cn.tz.chenjia.ui.KVDialog;
-import cn.tz.chenjia.ui.RemoveDialog;
 import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.utils.SecretRWUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
+import javax.swing.*;
 
 public class CmdSevrice implements ICmdService {
 
@@ -52,6 +54,9 @@ public class CmdSevrice implements ICmdService {
                 break;
             case FILEPATH:
                 r =  path();
+                break;
+            case FORMAT:
+                r =  format();
                 break;
             case HELP:
                 r =  help();
@@ -122,10 +127,9 @@ public class CmdSevrice implements ICmdService {
         String cmd = command.getInput();
         String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
         String code = strs.length == 2 ? strs[1] : null;
-        RemoveDialog dialog = new RemoveDialog(code);
-        dialog.pack();
-        dialog.setVisible(true);
-        if(dialog.isRemove()){
+        String tips = code == null ? "确定删除全部数据吗？" : "确定删除标题为【" + code + "】的数据吗？";
+        int i = JOptionPane.showConfirmDialog(null, tips, "删除数据", JOptionPane.YES_NO_OPTION);
+        if(i == 0){
             removeInfo(code);
             return EMsg.REMOVE_OK.toString();
         }else {
@@ -134,7 +138,7 @@ public class CmdSevrice implements ICmdService {
     }
 
     public static void removeInfo(String code) {
-        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
         String data = secretJO.getString("data");
         if(!data.equals("")){
             data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
@@ -162,7 +166,7 @@ public class CmdSevrice implements ICmdService {
 
     public static void updateInfo(String code, String info) {
         boolean ok = false;
-        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
         String data = secretJO.getString("data");
         if(!data.equals("")){
             data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
@@ -208,12 +212,25 @@ public class CmdSevrice implements ICmdService {
 
     @Override
     public String path() {
-        return SecretRWUtils.getSecretPath();
+        return ConfigsUtils.getDBProperties().getProperty("url");
+    }
+
+    @Override
+    public String format() {
+        String tips = "格式化将清空所有数据，确定要格式化吗？";
+        int i = JOptionPane.showConfirmDialog(null, tips, "格式化", JOptionPane.YES_NO_OPTION);
+        if(i == 0){
+            SecretRWUtils.write("");
+            loginOut();
+            return EMsg.FORMAT_OK.toString();
+        }else {
+            return "";
+        }
     }
 
     private String findRecord(String code) {
         String result = "";
-        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
         String data = secretJO.getString("data");
         if(!data.equals("")){
             data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
@@ -233,7 +250,7 @@ public class CmdSevrice implements ICmdService {
                     if (c.toLowerCase().contains(code.toLowerCase())) {
                         String info = jo.getString("info");
                         result = result.equals("") ? result : result + "\n" + ESymbol.BORDER + "\n";
-                        result += "【" + c + "】\n" + ESymbol.BORDER2 + "\n" + info;
+                        result += "【" + c + "】\n\n" + info;
                     }
                 }
             }

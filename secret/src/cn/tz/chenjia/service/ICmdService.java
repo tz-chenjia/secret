@@ -16,6 +16,8 @@ public interface ICmdService {
 
     String path();
 
+    String format();
+
     String help();
 
 }

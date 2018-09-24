@@ -1,6 +1,7 @@
 package cn.tz.chenjia.entity;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
+import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ESymbol;
 import cn.tz.chenjia.utils.FileRWUtils;
 import com.alibaba.fastjson.JSONArray;
@@ -60,10 +61,12 @@ public class Help {
     }
 
     public String findAllHelp(){
-        String r = "";
-        for(HelpInfo info : helps){
+        String r = EMsg.HELP_TIPS + "\n";
+        for(int i = 0; i < helps.size(); i++){
+            r = i == 0 ? r : r +"\n" + ESymbol.BORDER +"\n";
+            HelpInfo info = helps.get(i);
             String code = info.getCode();
-            r +=  info.getResume() + "\n" +code +"\n" + info.getDescription() + "\n\n"  + ESymbol.BORDER +"\n";
+            r +=  info.getResume() + " " +code;
         }
         return r;
     }

@@ -1,8 +1,9 @@
 package cn.tz.chenjia.entity;
 
-import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.utils.SecretRWUtils;
 import com.alibaba.fastjson.JSONObject;
+
+import java.util.List;
 
 public class User {
 
@@ -68,36 +69,46 @@ public class User {
     }
 
     public boolean login(String userName, String password, int n) {
-        JSONObject secretJO = null;
-        if (SecretRWUtils.exists()) {
-            secretJO = SecretRWUtils.readSecret(password, 1);
-            if (secretJO != null) {
-                String joUserName = secretJO.getString("userName");
-                String joPassword = secretJO.getString("password");
-                Integer joN = Integer.valueOf(secretJO.getString("n"));
-                user.setName(userName);
-                user.setPwd(password);
-                user.setN(n);
-                if (joUserName.equals(userName) && joPassword.equals(password) && joN == n) {
-                    user.setOnline(true);
-                    return true;
-                } else {
-                    user.setOnline(false);
-                    return false;
-                }
+        DB_Secret secrets = SecretRWUtils.readSecretByTitle(userName, userName);
+        if(secrets != null){
+            String content = secrets.getContent();
+            user.setName(userName);
+            user.setPwd(password);
+            user.setN(n);
+            if (secrets.get.equals(userName) && joPassword.equals(password) && joN == n + 1) {
+                user.setOnline(true);
+                SecretRWUtils.write(userName, password);
+                return true;
+            } else {
+                user.setOnline(false);
+                return false;
             }
+        }else{
+
         }
-        secretJO = new JSONObject();
-        secretJO.put("userName", userName);
-        secretJO.put("password", password);
-        secretJO.put("n", n);
-        secretJO.put("data", "");
-        SecretRWUtils.write(EncryptUtils.encrypt(JSONObject.toJSONString(secretJO), password, n));
-        user.setName(userName);
-        user.setPwd(password);
-        user.setN(n);
-        user.setOnline(true);
-        return true;
+
+
+        JSONObject secretJO = null;
+        secretJO = SecretRWUtils.readSecret(userName, password, 1);
+        if (secretJO != null) {
+            String joUserName = secretJO.getString("username");
+            String joPassword = secretJO.getString("password");
+            String joData = secretJO.getString("data");
+            Integer joN = Integer.valueOf(secretJO.getString("n"));
+            user.setName(userName);
+            user.setPwd(password);
+            user.setN(n);
+            if (joUserName.equals(userName) && joPassword.equals(password) && joN == n + 1) {
+                user.setOnline(true);
+                SecretRWUtils.write(userName, password);
+                return true;
+            } else {
+                user.setOnline(false);
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public void out() {
