@@ -5,15 +5,14 @@ import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.rule.ESymbol;
-import cn.tz.chenjia.ui.ICallback;
 import cn.tz.chenjia.ui.KVDialog;
 import cn.tz.chenjia.ui.RemoveDialog;
 import cn.tz.chenjia.utils.EncryptUtils;
-import cn.tz.chenjia.utils.ReadmeToggle;
+import cn.tz.chenjia.utils.SecretRWUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
-public class CmdSevrice implements ICmdService, ICallback {
+public class CmdSevrice implements ICmdService {
 
     private Commands command;
 
@@ -50,6 +49,9 @@ public class CmdSevrice implements ICmdService, ICallback {
                 break;
             case FIND:
                 r = find();
+                break;
+            case FILEPATH:
+                r =  path();
                 break;
             case HELP:
                 r =  help();
@@ -108,28 +110,31 @@ public class CmdSevrice implements ICmdService, ICallback {
         KVDialog dialog = new KVDialog();
         dialog.pack();
         dialog.setVisible(true);
-        return "";
+        if(dialog.isSave()){
+            return EMsg.SAVE_OK.toString();
+        }else {
+            return "";
+        }
     }
 
     @Override
     public String remove() {
         String cmd = command.getInput();
         String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
-        RemoveDialog dialog = null;
-        if (strs.length == 2) {
-            dialog = new RemoveDialog(strs[1]);
-            dialog.setCallback(CmdSevrice.this);
-        } else {
-            dialog = new RemoveDialog(null);
-            dialog.setCallback(CmdSevrice.this);
-        }
+        String code = strs.length == 2 ? strs[1] : null;
+        RemoveDialog dialog = new RemoveDialog(code);
         dialog.pack();
         dialog.setVisible(true);
-        return "";
+        if(dialog.isRemove()){
+            removeInfo(code);
+            return EMsg.REMOVE_OK.toString();
+        }else {
+            return "";
+        }
     }
 
     public static void removeInfo(String code) {
-        JSONObject secretJO = ReadmeToggle.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
         String data = secretJO.getString("data");
         if(!data.equals("")){
             data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
@@ -152,12 +157,12 @@ public class CmdSevrice implements ICmdService, ICallback {
             data = ja.toJSONString();
         }
         secretJO.put("data", EncryptUtils.encrypt(data,  User.getInstance().getPwd(), User.getInstance().getN()));
-        ReadmeToggle.write(EncryptUtils.encrypt(secretJO.toJSONString(), User.getInstance().getPwd(), User.getInstance().getN()));
+        SecretRWUtils.write(EncryptUtils.encrypt(secretJO.toJSONString(), User.getInstance().getPwd(), User.getInstance().getN()));
     }
 
     public static void updateInfo(String code, String info) {
         boolean ok = false;
-        JSONObject secretJO = ReadmeToggle.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
         String data = secretJO.getString("data");
         if(!data.equals("")){
             data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
@@ -187,7 +192,7 @@ public class CmdSevrice implements ICmdService, ICallback {
             data = ja.toJSONString();
         }
         secretJO.put("data", EncryptUtils.encrypt(data, User.getInstance().getPwd(), User.getInstance().getN()));
-        ReadmeToggle.write(EncryptUtils.encrypt(secretJO.toJSONString(), User.getInstance().getPwd(), User.getInstance().getN()));
+        SecretRWUtils.write(EncryptUtils.encrypt(secretJO.toJSONString(), User.getInstance().getPwd(), User.getInstance().getN()));
     }
 
     @Override
@@ -201,19 +206,25 @@ public class CmdSevrice implements ICmdService, ICallback {
         }
     }
 
+    @Override
+    public String path() {
+        return SecretRWUtils.getSecretPath();
+    }
+
     private String findRecord(String code) {
         String result = "";
-        JSONObject secretJO = ReadmeToggle.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
+        JSONObject secretJO = SecretRWUtils.readSecret(User.getInstance().getPwd(), User.getInstance().getN());
         String data = secretJO.getString("data");
         if(!data.equals("")){
             data = EncryptUtils.decrypt(data, User.getInstance().getPwd(), User.getInstance().getN());
             JSONArray ja = JSONObject.parseArray(data);
             if (code == null || code.equals("")) {
                 for (int i = 0; i < ja.size(); i++) {
+                    result = i == 0 ? result : result + "\n" + ESymbol.BORDER + "\n";
                     JSONObject jo = ja.getJSONObject(i);
                     String c = jo.getString("code");
                     String info = jo.getString("info");
-                    result += ESymbol.BORDER + "\n" + "【" + c + "】\n\n" + info + "\n";
+                    result +=  "【" + c + "】";
                 }
             }else{
                 for (int i = 0; i < ja.size(); i++) {
@@ -221,12 +232,11 @@ public class CmdSevrice implements ICmdService, ICallback {
                     String c = jo.getString("code");
                     if (c.toLowerCase().contains(code.toLowerCase())) {
                         String info = jo.getString("info");
-                        result += ESymbol.BORDER + "\n" + "【" + c + "】\n\n" + info + "\n";
+                        result = result.equals("") ? result : result + "\n" + ESymbol.BORDER + "\n";
+                        result += "【" + c + "】\n" + ESymbol.BORDER2 + "\n" + info;
                     }
                 }
             }
-        }else{
-
         }
         result = result.equals("") ? EMsg.INFO_NOT.toString() : result;
         return result;
@@ -240,28 +250,6 @@ public class CmdSevrice implements ICmdService, ICallback {
             return Help.getInstance().findSingleHelp(strs[1]);
         }else {
             return Help.getInstance().findAllHelp();
-        }
-    }
-
-    @Override
-    public void isRemove(boolean ok) {
-        String cmd = command.getInput();
-        String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
-        if(ok){
-            if (strs.length == 2) {
-                removeInfo(strs[1]);
-            } else {
-                removeInfo(null);
-            }
-        }
-    }
-
-    @Override
-    public void isSave(boolean ok) {
-        if(ok){
-
-        }else {
-
         }
     }
 }

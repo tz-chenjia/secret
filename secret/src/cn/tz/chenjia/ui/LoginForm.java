@@ -57,6 +57,15 @@ public class LoginForm extends JFrame {
         });
     }
 
+    private static void fileChooser(){
+        JFileChooser chooser = new JFileChooser();
+        int returnVal = chooser.showOpenDialog(new JPanel());
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            System.out.println("你打开的文件是: " +
+                    chooser.getSelectedFile().getPath());
+        }
+    }
+
     private void login(){
         String userName = userNameText.getText();
         String pwd = String.valueOf(pwdText.getPassword());
@@ -87,4 +96,5 @@ public class LoginForm extends JFrame {
     private JLabel nLabel;
     private JPasswordField pwdText;
     private JComboBox nComboBox;
+    private JButton fileChooserBtn;
 }

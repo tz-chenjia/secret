@@ -6,6 +6,10 @@ public class FileRWUtils {
 
     public static boolean exists(String filePath) {
         File file = new File(filePath);
+        File fileParent = file.getParentFile();
+        if(!fileParent.exists()){
+            fileParent.mkdirs();
+        }
         if (file.exists()) {
             return true;
         } else {

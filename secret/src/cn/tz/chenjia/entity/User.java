@@ -1,7 +1,7 @@
 package cn.tz.chenjia.entity;
 
 import cn.tz.chenjia.utils.EncryptUtils;
-import cn.tz.chenjia.utils.ReadmeToggle;
+import cn.tz.chenjia.utils.SecretRWUtils;
 import com.alibaba.fastjson.JSONObject;
 
 public class User {
@@ -69,8 +69,8 @@ public class User {
 
     public boolean login(String userName, String password, int n) {
         JSONObject secretJO = null;
-        if (ReadmeToggle.exists()) {
-            secretJO = ReadmeToggle.readSecret(password, 1);
+        if (SecretRWUtils.exists()) {
+            secretJO = SecretRWUtils.readSecret(password, 1);
             if (secretJO != null) {
                 String joUserName = secretJO.getString("userName");
                 String joPassword = secretJO.getString("password");
@@ -92,7 +92,7 @@ public class User {
         secretJO.put("password", password);
         secretJO.put("n", n);
         secretJO.put("data", "");
-        ReadmeToggle.write(EncryptUtils.encrypt(JSONObject.toJSONString(secretJO), password, n));
+        SecretRWUtils.write(EncryptUtils.encrypt(JSONObject.toJSONString(secretJO), password, n));
         user.setName(userName);
         user.setPwd(password);
         user.setN(n);

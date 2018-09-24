@@ -10,7 +10,7 @@ public class RemoveDialog extends JDialog {
     private JButton buttonOK;
     private JButton buttonCancel;
     private JLabel label;
-    private ICallback callback;
+    private boolean remove;
 
     public RemoveDialog(String code) {
         String title = code == null ? "确定删除全部数据？" : "确定删除 【" + code + "】？";
@@ -52,17 +52,17 @@ public class RemoveDialog extends JDialog {
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
-    public void setCallback(ICallback callback) {
-        this.callback = callback;
-    }
-
     private void onOK() {
-        callback.isRemove(true);
+        remove = true;
         dispose();
     }
 
     private void onCancel() {
-        callback.isRemove(false);
+        remove = false;
         dispose();
+    }
+
+    public boolean isRemove() {
+        return remove;
     }
 }

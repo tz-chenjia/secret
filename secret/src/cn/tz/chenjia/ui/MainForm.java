@@ -55,7 +55,7 @@ public class MainForm extends JFrame{
                     }else{
                         String r = CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
                         if(r != null && !r.equals("")) {
-                            sessionTextArea.append("\n" + ESymbol.SESSION_BORDER + "\n" + r + "\n");
+                            sessionTextArea.append("\n" + ESymbol.SESSION_BORDER_START + "\n" + r + "\n" + ESymbol.SESSION_BORDER_END);
                         }
                     }
                     cmdText.setText("");

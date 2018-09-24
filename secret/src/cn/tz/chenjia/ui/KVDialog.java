@@ -18,6 +18,7 @@ public class KVDialog extends JDialog {
     private JScrollPane jScrollPane;
     private JPanel statusJPanel;
     private JLabel statusLabel;
+    private boolean save;
 
     public KVDialog() {
         setTitle("Secret");
@@ -27,6 +28,7 @@ public class KVDialog extends JDialog {
         setModal(true);
         getRootPane().setDefaultButton(saveBtn);
         setIconImage(ConfigsUtils.getLogo());
+
         saveBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -47,6 +49,11 @@ public class KVDialog extends JDialog {
             }
         });
 
+        contentPane.registerKeyboardAction(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onOK();
+            }
+        }, KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_MASK), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         // call onCancel() on ESCAPE
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -63,13 +70,17 @@ public class KVDialog extends JDialog {
             statusLabel.setText(EMsg.ERROR_KV.toString());
         }else{
             CmdSevrice.updateInfo(title, content);
+            save = true;
             dispose();
         }
     }
 
     private void onCancel() {
-        // add your code here if necessary
+        save = false;
         dispose();
     }
 
+    public boolean isSave() {
+        return save;
+    }
 }

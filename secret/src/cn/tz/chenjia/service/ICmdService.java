@@ -14,6 +14,8 @@ public interface ICmdService {
 
     String find();
 
+    String path();
+
     String help();
 
 }

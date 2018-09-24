@@ -4,7 +4,7 @@ import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.ERegexp;
 
 public enum Commands {
-    LOGIN, LOGINOUT, OUT, PUT, REMOVE, FIND, CLEAR, HELP;
+    LOGIN, LOGINOUT, OUT, PUT, REMOVE, FIND, CLEAR, FILEPATH, HELP;
 
     private String input;
 
@@ -33,6 +33,8 @@ public enum Commands {
             return onlineCmd(FIND);
         }else if (input.matches(ERegexp.CMD_CLEAR_RE.toString())) {
             return CLEAR;
+        }else if (input.matches(ERegexp.CMD_FILEPATH_RE.toString())) {
+            return FILEPATH;
         }
         return null;
     }

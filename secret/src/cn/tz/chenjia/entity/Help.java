@@ -63,7 +63,7 @@ public class Help {
         String r = "";
         for(HelpInfo info : helps){
             String code = info.getCode();
-            r += ESymbol.BORDER + "\n" + info.getResume() + "\n" +code +"\n" + info.getDescription() + "\n\n";
+            r +=  info.getResume() + "\n" +code +"\n" + info.getDescription() + "\n\n"  + ESymbol.BORDER +"\n";
         }
         return r;
     }
