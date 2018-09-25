@@ -1,10 +1,14 @@
 package cn.tz.chenjia.ui;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
+import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.service.CmdSevrice;
+import cn.tz.chenjia.ui.configs.InputMaxLength;
+import cn.tz.chenjia.utils.EncryptUtils;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 
 public class KVDialog extends JDialog {
@@ -23,11 +27,20 @@ public class KVDialog extends JDialog {
     public KVDialog() {
         setTitle("Secret");
         setContentPane(contentPane);
-        setSize(400,300);
+        setSize(800, 800);
         setLocationRelativeTo(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(saveBtn);
         setIconImage(ConfigsUtils.getLogo());
+        setResizable(true);
+        super.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                contentTextArea.setMargin(new Insets(5, 5, 5, 5));
+                contentTextArea.setDocument(new InputMaxLength(500));
+                titleText.setDocument(new InputMaxLength(40));
+            }
+        });
 
         saveBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -66,9 +79,11 @@ public class KVDialog extends JDialog {
         String title = titleText.getText().trim();
         String content = contentTextArea.getText().trim();
 
-        if(title.equals("") || content.equals("")){
+        if (title.equals("") || content.equals("")) {
             statusLabel.setText(EMsg.ERROR_KV.toString());
-        }else{
+        } else if (EncryptUtils.encrypt(title, User.getInstance().getPwd(), User.getInstance().getN()).equals(User.getInstance().getName())) {
+            statusLabel.setText(EMsg.ERROR_KV2.toString());
+        } else {
             CmdSevrice.updateInfo(title, content);
             save = true;
             dispose();

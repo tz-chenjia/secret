@@ -1,12 +1,14 @@
 package cn.tz.chenjia.entity;
 
-import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ESymbol;
 import cn.tz.chenjia.utils.FileRWUtils;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,21 +18,28 @@ public class Help {
 
     private static Help help;
 
-    private Help(){}
+    private Help() {
+    }
 
-    public static Help getInstance(){
-        if(help == null){
+    public static Help getInstance() {
+        if (help == null) {
             help = new Help();
             help.setHelps(help.readConf());
         }
         return help;
     }
 
-    private List<HelpInfo> readConf(){
+    private List<HelpInfo> readConf() {
         List<HelpInfo> helps = new ArrayList<HelpInfo>();
-        String helpsStr = FileRWUtils.read(ConfigsUtils.getSingleConf("help"));
+        InputStream helpjo = this.getClass().getResourceAsStream("help.jo");
+        String helpsStr = null;
+        try {
+            helpsStr = FileRWUtils.read(new InputStreamReader(helpjo, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         JSONArray ja = JSONObject.parseArray(helpsStr);
-        for(int i=0 ; i<ja.size(); i++){
+        for (int i = 0; i < ja.size(); i++) {
             JSONObject jo = ja.getJSONObject(i);
             HelpInfo info = new HelpInfo();
             info.setCode(jo.getString("code"));
@@ -49,10 +58,10 @@ public class Help {
         this.helps = helps;
     }
 
-    public String findSingleHelp(String cmd){
+    public String findSingleHelp(String cmd) {
         String r = "";
-        for(HelpInfo info : helps){
-            if(info.getCode().equalsIgnoreCase(cmd.trim())){
+        for (HelpInfo info : helps) {
+            if (info.getCode().equalsIgnoreCase(cmd.trim())) {
                 r = info.getDescription();
                 break;
             }
@@ -60,18 +69,19 @@ public class Help {
         return r;
     }
 
-    public String findAllHelp(){
+    public String findAllHelp() {
         String r = EMsg.HELP_TIPS + "\n";
-        for(int i = 0; i < helps.size(); i++){
-            r = i == 0 ? r : r +"\n" + ESymbol.BORDER +"\n";
+        for (int i = 0; i < helps.size(); i++) {
+            r = i == 0 ? r : r + "\n" + ESymbol.BORDER + "\n";
             HelpInfo info = helps.get(i);
             String code = info.getCode();
-            r +=  info.getResume() + " " +code;
+            r += info.getResume() + " " + code;
         }
         return r;
     }
 }
-class HelpInfo{
+
+class HelpInfo {
     private String code;
 
     private String resume;

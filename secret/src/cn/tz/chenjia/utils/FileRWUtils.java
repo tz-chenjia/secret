@@ -54,6 +54,36 @@ public class FileRWUtils {
         return str.toString();
     }
 
+    public static String read(InputStreamReader isr) {
+        BufferedReader br = null;
+        StringBuffer str = new StringBuffer();
+        try {
+            br = new BufferedReader(isr);
+            String lineStr;
+            while ((lineStr = br.readLine()) != null) {
+                str.append(lineStr);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (isr != null) {
+                try {
+                    isr.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return str.toString();
+    }
+
     public static void write(File file, String content) {
         BufferedWriter out = null;
         try {

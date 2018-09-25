@@ -73,7 +73,7 @@ public class User {
         jo.put("pwd", password);
         jo.put("n", n);
         String contentSecret = EncryptUtils.encrypt(JSONObject.toJSONString(jo), password, n);
-        if(secrets != null){
+        if (secrets != null) {
             String contentDBSecret = secrets.getContent();
             if (contentSecret.equals(contentDBSecret)) {
                 user.setName(userName);
@@ -85,7 +85,7 @@ public class User {
                 user.setOnline(false);
                 return false;
             }
-        }else{
+        } else {
             user.setName(userName);
             user.setPwd(password);
             user.setN(n);

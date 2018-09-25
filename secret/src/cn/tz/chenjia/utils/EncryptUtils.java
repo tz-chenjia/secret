@@ -93,7 +93,7 @@ public class EncryptUtils {
     public static String decrypt(String data, String key, int n) {
         String r = "";
         String secrtKey = getSecrtKey(key);
-        for(int i = 0; i<=n; i++){
+        for (int i = 0; i <= n; i++) {
             r = decrypt(data, secrtKey);
         }
         return r;
@@ -102,7 +102,7 @@ public class EncryptUtils {
     public static String encrypt(String data, String key, int n) {
         String r = "";
         String secrtKey = getSecrtKey(key);
-        for(int i = 0; i<=n; i++){
+        for (int i = 0; i <= n; i++) {
             r = encrypt(data, secrtKey);
         }
         return r;

@@ -6,6 +6,7 @@ import cn.tz.chenjia.db.SecretDAO;
 import cn.tz.chenjia.rule.EDBType;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.service.CmdSevrice;
+import cn.tz.chenjia.ui.configs.InputMaxLength;
 
 import javax.swing.*;
 import java.awt.event.*;
@@ -16,7 +17,7 @@ public class LoginForm extends JFrame {
     public LoginForm() {
         setTitle("Secret");
         setContentPane(mainJPanel);
-        setSize(200, 130);
+        setSize(500, 500);
         setLocationRelativeTo(mainJPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setIconImage(ConfigsUtils.getLogo());
@@ -26,23 +27,28 @@ public class LoginForm extends JFrame {
         super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
+                userNameText.setDocument(new InputMaxLength(40));
+                pwdText.setDocument(new InputMaxLength(40));
+
                 pwdText.requestFocus();
                 Properties prop = ConfigsUtils.getDBProperties();
-                //读取信息
-                String ip = prop.getProperty("ip");
-                String port = prop.getProperty("port");
-                String name = prop.getProperty("name");
-                String userName = prop.getProperty("userName");
-                String password = prop.getProperty("password");
-                String type = prop.getProperty("type");
-                String secretName = prop.getProperty("secretName");
-                dbIPText.setText(ip);
-                dbPortText.setText(port);
-                dbNameText.setText(name);
-                dbUserNameText.setText(userName);
-                dbPwdText.setText(password);
-                dbTypeComboBox.setSelectedItem(type);
-                userNameText.setText(secretName);
+                if(prop != null){
+                    //读取信息
+                    String ip = prop.getProperty("ip");
+                    String port = prop.getProperty("port");
+                    String name = prop.getProperty("name");
+                    String userName = prop.getProperty("userName");
+                    String password = prop.getProperty("password");
+                    String type = prop.getProperty("type");
+                    String secretName = prop.getProperty("secretName");
+                    dbIPText.setText(ip);
+                    dbPortText.setText(port);
+                    dbNameText.setText(name);
+                    dbUserNameText.setText(userName);
+                    dbPwdText.setText(password);
+                    dbTypeComboBox.setSelectedItem(type);
+                    userNameText.setText(secretName);
+                }
             }
 
             @Override
@@ -53,7 +59,7 @@ public class LoginForm extends JFrame {
         loginBtn.registerKeyboardAction(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                    login();
+                login();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
         cancelBtn.registerKeyboardAction(new ActionListener() {
@@ -102,8 +108,8 @@ public class LoginForm extends JFrame {
         String userName = userNameText.getText();
         String pwd = String.valueOf(pwdText.getPassword());
 
-        if(!userName.matches(ERegexp.EMAIL_RE.toString())){
-            JOptionPane.showMessageDialog(null,"账号请使用你的任意邮箱作为账号", "登录失败", JOptionPane.ERROR_MESSAGE);
+        if (!userName.matches(ERegexp.EMAIL_RE.toString())) {
+            JOptionPane.showMessageDialog(null, "账号请使用你的任意邮箱作为账号", "登录失败", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -118,10 +124,10 @@ public class LoginForm extends JFrame {
                 new MainForm(userName);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(null,"请检查你的用户名密码及幸运数字", "登录失败", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "请检查你的用户名密码及幸运数字", "登录失败", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
-            JOptionPane.showMessageDialog(null,"数据库连接失败，请检查网络配置", "登录失败", JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "数据库连接失败，请检查网络配置", "登录失败", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -133,8 +139,6 @@ public class LoginForm extends JFrame {
     private JPanel mainJPanel;
     private JPanel jPanel1;
     private JPanel jPanel2;
-    private JPanel jPanel3;
-    private JLabel statusLabel;
     private JButton cancelBtn;
     private JButton loginBtn;
     private JTextField userNameText;

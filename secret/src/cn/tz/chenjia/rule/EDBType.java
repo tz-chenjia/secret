@@ -3,7 +3,7 @@ package cn.tz.chenjia.rule;
 public enum EDBType {
 
     MYSQL("mysql", "com.mysql.jdbc.Driver"), SQLSERVER("sqlserver", "com.microsoft.sqlserver.jdbc.SQLServerDriver"),
-    ORACLE("oracle","oracle.jdbc.driver.OracleDriver"), DB2("db2","com.ibm.db2.jcc.DB2Driver");
+    ORACLE("oracle", "oracle.jdbc.driver.OracleDriver"), DB2("db2", "com.ibm.db2.jcc.DB2Driver");
 
     private String type;
 
@@ -18,8 +18,8 @@ public enum EDBType {
         return driverClass;
     }
 
-    public static EDBType toEDBType(String type){
-        switch (type){
+    public static EDBType toEDBType(String type) {
+        switch (type) {
             case "db2":
                 return DB2;
             case "sqlserver":
@@ -32,8 +32,8 @@ public enum EDBType {
         }
     }
 
-    public static String toString(EDBType type){
-        switch (type){
+    public static String toString(EDBType type) {
+        switch (type) {
             case DB2:
                 return "db2";
             case SQLSERVER:

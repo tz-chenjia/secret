@@ -1,6 +1,5 @@
 package cn.tz.chenjia.service;
 
-import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.email.SimpleMailSender;
 import cn.tz.chenjia.entity.DB_Secret;
 import cn.tz.chenjia.entity.Help;
@@ -170,7 +169,7 @@ public class CmdSevrice implements ICmdService {
 
     @Override
     public String path() {
-        return ConfigsUtils.getDBProperties().getProperty("ip");
+        return SecretRWUtils.getExportSQLFile().getPath();
     }
 
     @Override
@@ -196,8 +195,8 @@ public class CmdSevrice implements ICmdService {
                 String c = EncryptUtils.decrypt(content, User.getInstance().getPwd(), User.getInstance().getN());
                 if (code == null || code.equals("")) {
                     result = result.equals("") ? result : result + "\n" + ESymbol.BORDER + "\n";
-                    result += "【" + t + "】\n\n" + c;
-                } else if (code.equalsIgnoreCase(t)) {
+                    result += "【" + t + "】";
+                } else if (t.toLowerCase().contains(code)) {
                     result = result.equals("") ? result : result + "\n" + ESymbol.BORDER + "\n";
                     result += "【" + t + "】\n\n" + c;
                 }
@@ -228,18 +227,18 @@ public class CmdSevrice implements ICmdService {
         return EMsg.PASSWORD_OK.toString();
     }
 
-    private void resetPwd(String userName, String newPwd, int newN){
+    private void resetPwd(String userName, String newPwd, int newN) {
         String pwd = EncryptUtils.encrypt(newPwd, newPwd, 1);
         List<DB_Secret> db_secrets = SecretRWUtils.readSecret(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
         SecretRWUtils.removeUser(userName);
-        for (DB_Secret secret : db_secrets){
-            if(!secret.getTitle().equals(secret.getUsername())){
+        for (DB_Secret secret : db_secrets) {
+            if (!secret.getTitle().equals(secret.getUsername())) {
                 String title = EncryptUtils.decrypt(secret.getTitle(), User.getInstance().getPwd(), User.getInstance().getN());
                 String content = EncryptUtils.decrypt(secret.getContent(), User.getInstance().getPwd(), User.getInstance().getN());
                 secret.setContent(title);
                 secret.setContent(content);
                 SecretRWUtils.write(title, content, userName, pwd, newN);
-            }else {
+            } else {
                 JSONObject jo = new JSONObject();
                 jo.put("pwd", pwd);
                 jo.put("n", Integer.valueOf(newN));
@@ -256,16 +255,10 @@ public class CmdSevrice implements ICmdService {
         Map<String, File> files = new HashMap<>();
         files.put("secret.sql", SecretRWUtils.getExportSQLFile());
         boolean b = SimpleMailSender.sendMail("tz_chenjia@qq.com", "1567890", "1llll", files);
-        if(b){
+        if (b) {
             return EMsg.BACKUPS_OK + EMsg.BACKUPS_EMAIL_OK.toString();
         }
         return EMsg.BACKUPS_OK.toString() + EMsg.BACKUPS_EMAIL_FAIL;
     }
 
-    public static void main(String[] args) {
-        String pwd = EncryptUtils.encrypt("2", "2", 1);
-        System.out.println(pwd);
-        String title = "xGsPpgmUjKaz3tLsOFjglA==";
-        System.out.println(EncryptUtils.decrypt(title, pwd, 0));
-    }
 }

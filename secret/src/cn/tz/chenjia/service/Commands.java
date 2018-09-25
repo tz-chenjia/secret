@@ -31,15 +31,15 @@ public enum Commands {
             return onlineCmd(REMOVE);
         } else if (input.matches(ERegexp.CMD_FIND_RE.toString())) {
             return onlineCmd(FIND);
-        }else if (input.matches(ERegexp.CMD_CLEAR_RE.toString())) {
+        } else if (input.matches(ERegexp.CMD_CLEAR_RE.toString())) {
             return CLEAR;
-        }else if (input.matches(ERegexp.CMD_FILEPATH_RE.toString())) {
+        } else if (input.matches(ERegexp.CMD_FILEPATH_RE.toString())) {
             return FILEPATH;
-        }else if (input.matches(ERegexp.CMD_FORMAT_RE.toString())) {
+        } else if (input.matches(ERegexp.CMD_FORMAT_RE.toString())) {
             return FORMAT;
-        }else if (input.matches(ERegexp.CMD_PASSWORD_RE.toString())) {
+        } else if (input.matches(ERegexp.CMD_PASSWORD_RE.toString())) {
             return PASSWORD;
-        }else if (input.matches(ERegexp.CMD_BACKUPS_RE.toString())) {
+        } else if (input.matches(ERegexp.CMD_BACKUPS_RE.toString())) {
             return BACKUPS;
         }
         return null;

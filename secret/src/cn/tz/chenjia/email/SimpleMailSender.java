@@ -18,7 +18,7 @@ import java.util.Properties;
 
 public class SimpleMailSender {
 
-    public static Properties getMailProperties(){
+    public static Properties getMailProperties() {
         File propFile = new File(SimpleMailSender.class.getResource("email.properties").getFile());
         Properties properties = new Properties();
         BufferedReader bufferedReader = null;
@@ -31,11 +31,10 @@ public class SimpleMailSender {
             e.printStackTrace();
         }
         properties.put("mail.password", EncryptUtils.decrypt(properties.getProperty("mail.password"), EncryptUtils.KEY, EncryptUtils.N));
-        return  properties;
+        return properties;
     }
 
     /**
-     *
      * @param to
      * @param subject
      * @param content
@@ -43,7 +42,7 @@ public class SimpleMailSender {
      * @return
      */
     public static boolean sendMail(String to, String subject, String content, Map<String, File> files) {
-        if (to != null){
+        if (to != null) {
             Properties prop = getMailProperties();
             String user = prop.getProperty("mail.user");
             String password = prop.getProperty("mail.password");
@@ -58,7 +57,7 @@ public class SimpleMailSender {
 
                 MimeMultipart mimeMultipart = new MimeMultipart("mixed");
                 message.setContent(mimeMultipart);
-                for(Map.Entry<String, File> e : files.entrySet()){
+                for (Map.Entry<String, File> e : files.entrySet()) {
                     String fileName = e.getKey();
                     File file = e.getValue();
                     MimeBodyPart attch = new MimeBodyPart();
@@ -81,7 +80,7 @@ public class SimpleMailSender {
                 return false;
             }
             return true;
-        }else{
+        } else {
             return false;
         }
     }

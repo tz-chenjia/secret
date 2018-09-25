@@ -7,7 +7,7 @@ import java.util.List;
 public class SecretDAO extends BaseDao {
     public static final String SECRET_TABLE_NAME = "secret";
 
-    public SecretDAO(){
+    public SecretDAO() {
 
     }
 
@@ -46,16 +46,16 @@ public class SecretDAO extends BaseDao {
         super.update(sql, paramsValue);
     }
 
-    public List<DB_Secret> findByName(String userName){
+    public List<DB_Secret> findByName(String userName) {
         String sql = "select * from " + SECRET_TABLE_NAME + " where username=?";
         List<DB_Secret> list = super.query(sql, new Object[]{userName}, DB_Secret.class);
-        return  list;
+        return list;
     }
 
-    public DB_Secret findByNameAndTitle(String userName, String title){
+    public DB_Secret findByNameAndTitle(String userName, String title) {
         String sql = "select * from " + SECRET_TABLE_NAME + " where username=? and title=?";
         List<DB_Secret> list = super.query(sql, new Object[]{userName, title}, DB_Secret.class);
-        return  list.size() > 0 ? list.get(0):null;
+        return list.size() > 0 ? list.get(0) : null;
     }
 
 }

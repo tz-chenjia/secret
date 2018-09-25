@@ -52,7 +52,7 @@ public class SecretRWUtils {
 
     public static void exportSQL(String userName, String pwd, int n) {
         StringBuffer sb = new StringBuffer();
-        sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME +";");
+        sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME + ";");
         List<DB_Secret> db_secrets = readSecret(userName, pwd, n);
         for (DB_Secret secret : db_secrets) {
             sb.append("insert into " + SecretDAO.SECRET_TABLE_NAME +
@@ -62,7 +62,7 @@ public class SecretRWUtils {
         FileRWUtils.write(getExportSQLFile(), sb.toString());
     }
 
-    public static File getExportSQLFile(){
+    public static File getExportSQLFile() {
         File f = new File(System.getProperty("user.dir") + File.separator + "secret.sql");
         return f;
     }

@@ -2,11 +2,13 @@ package cn.tz.chenjia;
 
 import cn.tz.chenjia.ui.LoginForm;
 
+import javax.swing.*;
+
 public class Entry {
 
-    public static void main(String[] args) {
-        //String str="jdbc\\:mysql\\://192.168.1.103\\:3306/test?useUnicode\\=true&characterEncoding\\=UTF-8&zeroDateTimeBehavior\\=convertToNull";
-        //System.out.println(str);
+    public static void main(String[] args) throws Exception {
+        org.jb2011.lnf.beautyeye.BeautyEyeLNFHelper.launchBeautyEyeLNF();
+        UIManager.put("RootPane.setupButtonVisible", false);
         new LoginForm();
     }
 

@@ -27,9 +27,9 @@ public class JDBCUtils {
         }
     }
 
-    private static String buildDBUrl(String type, String ip, String port, String name){
+    private static String buildDBUrl(String type, String ip, String port, String name) {
         String url;
-        switch (type){
+        switch (type) {
             case "db2":
                 url = "jdbc:db2://" + ip + "[:" + port + "]/" + name;
                 break;
@@ -37,11 +37,11 @@ public class JDBCUtils {
                 url = "jdbc:sqlserver://" + ip + ":" + port + ";DatabaseName=" + name;
                 break;
             case "oracle":
-                url = "jdbc:oracle:thin:@" + ip + ":" + port + ":"+ name;
+                url = "jdbc:oracle:thin:@" + ip + ":" + port + ":" + name;
                 break;
             default:
                 //mysql
-                url = "jdbc:mysql://" + ip + ":" + port + "/"+ name +"?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
+                url = "jdbc:mysql://" + ip + ":" + port + "/" + name + "?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull";
                 break;
         }
         return url;
@@ -68,18 +68,16 @@ public class JDBCUtils {
         Connection conn = null;
         try {
             Properties prop = ConfigsUtils.getDBProperties();
-            //读取信息
-
-
-            driverClass = prop.getProperty("driverClass");
-            userName = prop.getProperty("userName");
-            password = prop.getProperty("password");
-            String type = prop.getProperty("type");
-            String ip = prop.getProperty("ip");
-            String port = prop.getProperty("port");
-            String name = prop.getProperty("name");
-            url = buildDBUrl(type, ip, port, name);
-
+            if(prop != null){
+                driverClass = prop.getProperty("driverClass");
+                userName = prop.getProperty("userName");
+                password = prop.getProperty("password");
+                String type = prop.getProperty("type");
+                String ip = prop.getProperty("ip");
+                String port = prop.getProperty("port");
+                String name = prop.getProperty("name");
+                url = buildDBUrl(type, ip, port, name);
+            }
 
             //注册驱动程序
             Class.forName(driverClass);

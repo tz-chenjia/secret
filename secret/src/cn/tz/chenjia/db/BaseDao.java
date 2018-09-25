@@ -14,12 +14,12 @@ public class BaseDao {
     private PreparedStatement pstmt;
     private ResultSet rs;
 
-    public final boolean tableExists(String tableName){
+    public final boolean tableExists(String tableName) {
         boolean flag = false;
         try {
             con = JDBCUtils.getConnection();
             DatabaseMetaData meta = con.getMetaData();
-            String type [] = {"TABLE"};
+            String type[] = {"TABLE"};
             rs = meta.getTables(null, null, tableName, type);
             flag = rs.next();
         } catch (SQLException e) {
@@ -28,10 +28,10 @@ public class BaseDao {
         return flag;
     }
 
-    public void createTable(EDBType type, String tableName){
-        String sql = "";
-        switch (type){
-            case DB2 :
+    public void createTable(EDBType type, String tableName) {
+        String sql = "CREATE TABLE " + tableName + " (username varchar(500) NOT NULL,title varchar(500) NOT NULL,content varchar(4000) NOT NULL)";
+        switch (type) {
+            case DB2:
                 break;
             case SQLSERVER:
                 break;
@@ -39,7 +39,6 @@ public class BaseDao {
                 break;
             default:
                 //mysql
-                sql = "CREATE TABLE " + tableName + " (id int(5) NOT NULL auto_increment,username varchar(500) NOT NULL,title varchar(1000) NOT NULL,content varchar(4000) NOT NULL,PRIMARY KEY  (`id`))";
                 break;
         }
         update(sql, new Object[]{});
@@ -48,10 +47,11 @@ public class BaseDao {
 
     /**
      * 查询的通用方法
+     *
      * @param sql
      * @param paramsValue
      */
-    public <T> List<T> query(String sql, Object[] paramsValue, Class<T> clazz){
+    public <T> List<T> query(String sql, Object[] paramsValue, Class<T> clazz) {
 
         try {
             // 返回的集合
@@ -66,8 +66,8 @@ public class BaseDao {
             // 3. 获取占位符参数的个数， 并设置每个参数的值
             int count = pstmt.getParameterMetaData().getParameterCount();
             if (paramsValue != null && paramsValue.length > 0) {
-                for (int i=0; i<paramsValue.length; i++) {
-                    pstmt.setObject(i+1, paramsValue[i]);
+                for (int i = 0; i < paramsValue.length; i++) {
+                    pstmt.setObject(i + 1, paramsValue[i]);
                 }
             }
             // 4. 执行查询
@@ -83,7 +83,7 @@ public class BaseDao {
                 t = clazz.newInstance();
 
                 // 7. 遍历每一行的每一列, 封装数据
-                for (int i=0; i<columnCount; i++) {
+                for (int i = 0; i < columnCount; i++) {
                     // 获取每一列的列名称
                     String columnName = rsmd.getColumnName(i + 1);
                     // 获取每一列的列名称, 对应的值
@@ -106,10 +106,11 @@ public class BaseDao {
 
     /**
      * 更新的通用方法
-     * @param sql   更新的sql语句(update/insert/delete)
-     * @param paramsValue  sql语句中占位符对应的值(如果没有占位符，传入null)
+     *
+     * @param sql         更新的sql语句(update/insert/delete)
+     * @param paramsValue sql语句中占位符对应的值(如果没有占位符，传入null)
      */
-    public void update(String sql,Object[] paramsValue) {
+    public void update(String sql, Object[] paramsValue) {
 
         try {
             // 获取连接
