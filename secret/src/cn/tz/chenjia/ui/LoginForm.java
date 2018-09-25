@@ -4,6 +4,7 @@ import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.db.JDBCUtils;
 import cn.tz.chenjia.db.SecretDAO;
 import cn.tz.chenjia.rule.EDBType;
+import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.service.CmdSevrice;
 
 import javax.swing.*;
@@ -11,7 +12,6 @@ import java.awt.event.*;
 import java.util.Properties;
 
 public class LoginForm extends JFrame {
-    private static final String SECRET_TABLE_NAME = "DB_Secret";
 
     public LoginForm() {
         setTitle("Secret");
@@ -26,6 +26,7 @@ public class LoginForm extends JFrame {
         super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
+                pwdText.requestFocus();
                 Properties prop = ConfigsUtils.getDBProperties();
                 //读取信息
                 String ip = prop.getProperty("ip");
@@ -97,16 +98,20 @@ public class LoginForm extends JFrame {
         String dbPort = dbPortText.getText();
         String dbUserName = dbUserNameText.getText();
         String dbName = dbNameText.getText();
-        String dbPpassword = String.valueOf(dbPwdText.getPassword());
+        String dbPassword = String.valueOf(dbPwdText.getPassword());
         String userName = userNameText.getText();
         String pwd = String.valueOf(pwdText.getPassword());
+
+        if(!userName.matches(ERegexp.EMAIL_RE.toString())){
+            JOptionPane.showMessageDialog(null,"账号请使用你的任意邮箱作为账号", "登录失败", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         EDBType dbType = EDBType.toEDBType(dbTypeComboBox.getSelectedItem().toString());
-        if (JDBCUtils.isUseDB(dbIP, dbPort, dbName, dbUserName, dbPpassword, dbType, userName)) {
+        if (JDBCUtils.isUseDB(dbIP, dbPort, dbName, dbUserName, dbPassword, dbType, userName)) {
             SecretDAO dao = new SecretDAO();
-            if (!dao.tableExists(SECRET_TABLE_NAME)) {
-                String tableSql = "create table " + SECRET_TABLE_NAME + " (username varchar(50) not null primary key,"
-                        + "secret varchar(3000) not null ); ";
-                dao.update(tableSql, new Object[]{});
+            if (!dao.tableExists(SecretDAO.SECRET_TABLE_NAME)) {
+                dao.createTable(dbType, SecretDAO.SECRET_TABLE_NAME);
             }
             int n = Integer.valueOf(nComboBox.getSelectedItem().toString());
             if (CmdSevrice.login(userName, pwd, n)) {

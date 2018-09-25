@@ -14,6 +14,10 @@ public class EncryptUtils {
 
     private static final String ALGORITHM = "AES";
 
+    public static final String KEY = "SECRET";
+
+    public static final int N = 1;
+
     private static Key toKey(byte[] key) {
         SecretKey secretKey = new SecretKeySpec(key, ALGORITHM);
         return secretKey;

@@ -42,7 +42,6 @@ public class ConfigsUtils {
         Properties properties = new Properties();
         // 使用InPutStream流读取properties文件
         BufferedReader bufferedReader = null;
-        String secretPath = null;
         try {
             bufferedReader = new BufferedReader(new FileReader(dbPropFile));
             properties.load(bufferedReader);

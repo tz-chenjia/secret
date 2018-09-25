@@ -5,7 +5,7 @@ import cn.tz.chenjia.entity.DB_Secret;
 import java.util.List;
 
 public class SecretDAO extends BaseDao {
-    private static final String SECRET_TABLE_NAME = "DB_Secret";
+    public static final String SECRET_TABLE_NAME = "secret";
 
     public SecretDAO(){
 
@@ -20,6 +20,13 @@ public class SecretDAO extends BaseDao {
 
     // 删除
     public void deleteAllByUser(String userName) {
+        String sql = "delete from " + SECRET_TABLE_NAME + " where userName=? and title<>?";
+        Object[] paramsValue = {userName, userName};
+        super.update(sql, paramsValue);
+    }
+
+    // 删除
+    public void deleteUser(String userName) {
         String sql = "delete from " + SECRET_TABLE_NAME + " where userName=? ";
         Object[] paramsValue = {userName};
         super.update(sql, paramsValue);
@@ -48,6 +55,7 @@ public class SecretDAO extends BaseDao {
     public DB_Secret findByNameAndTitle(String userName, String title){
         String sql = "select * from " + SECRET_TABLE_NAME + " where username=? and title=?";
         List<DB_Secret> list = super.query(sql, new Object[]{userName, title}, DB_Secret.class);
-        return  list!=null?list.get(0):null;
+        return  list.size() > 0 ? list.get(0):null;
     }
+
 }

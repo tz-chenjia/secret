@@ -20,4 +20,8 @@ public interface ICmdService {
 
     String help();
 
+    String password();
+
+    String backups();
+
 }

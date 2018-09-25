@@ -1,5 +1,6 @@
 package cn.tz.chenjia.db;
 
+import cn.tz.chenjia.rule.EDBType;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.sql.*;
@@ -27,20 +28,21 @@ public class BaseDao {
         return flag;
     }
 
-    public void createTable(String type, String tableName){
+    public void createTable(EDBType type, String tableName){
         String sql = "";
         switch (type){
-            case "db2":
+            case DB2 :
                 break;
-            case "sqlserver":
+            case SQLSERVER:
                 break;
-            case "oracle":
+            case ORACLE:
                 break;
             default:
                 //mysql
-                sql = "CREATE TABLE " + tableName + " (id int(5) NOT NULL auto_increment,username varchar(20) NOT NULL,title varchar(20) NOT NULL,content varchar(2000) NOT NULL,PRIMARY KEY  (`id`))";
+                sql = "CREATE TABLE " + tableName + " (id int(5) NOT NULL auto_increment,username varchar(500) NOT NULL,title varchar(1000) NOT NULL,content varchar(4000) NOT NULL,PRIMARY KEY  (`id`))";
                 break;
         }
+        update(sql, new Object[]{});
     }
 
 
