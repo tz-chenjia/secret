@@ -19,11 +19,10 @@ import java.util.Properties;
 public class SimpleMailSender {
 
     public static Properties getMailProperties() {
-        File propFile = new File(SimpleMailSender.class.getResource("email.properties").getFile());
         Properties properties = new Properties();
         BufferedReader bufferedReader = null;
         try {
-            bufferedReader = new BufferedReader(new FileReader(propFile));
+            bufferedReader = new BufferedReader(new InputStreamReader(SimpleMailSender.class.getResourceAsStream("email.properties")));
             properties.load(bufferedReader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
