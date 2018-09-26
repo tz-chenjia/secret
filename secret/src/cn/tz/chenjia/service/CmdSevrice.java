@@ -257,9 +257,9 @@ public class CmdSevrice implements ICmdService {
     @Override
     public String backups() {
         SecretRWUtils.exportSQL(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
-        Map<String, File> files = new HashMap<>();
+        Map<String, File> files = new HashMap<String, File>();
         files.put("secret.sql", SecretRWUtils.getExportSQLFile());
-        boolean b = SimpleMailSender.sendMail("tz_chenjia@qq.com", "1567890", "1llll", files);
+        boolean b = SimpleMailSender.sendMail(User.getInstance().getName(), "【Secret】", "数据备份文件在存放在附件中，请注意查收", files);
         if (b) {
             return EMsg.BACKUPS_OK + EMsg.BACKUPS_EMAIL_OK.toString();
         }

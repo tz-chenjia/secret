@@ -1,6 +1,7 @@
 package cn.tz.chenjia.email;
 
 import cn.tz.chenjia.utils.EncryptUtils;
+import cn.tz.chenjia.utils.ExceptionHandleUtils;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
@@ -25,9 +26,9 @@ public class SimpleMailSender {
             bufferedReader = new BufferedReader(new InputStreamReader(SimpleMailSender.class.getResourceAsStream("email.properties")));
             properties.load(bufferedReader);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         properties.put("mail.password", EncryptUtils.decrypt(properties.getProperty("mail.password"), EncryptUtils.KEY, EncryptUtils.N));
         return properties;
@@ -75,7 +76,7 @@ public class SimpleMailSender {
                 htmlPart.setContent(content, "text/html;charset=utf-8");
                 Transport.send(message);
             } catch (MessagingException e) {
-                e.printStackTrace();
+                ExceptionHandleUtils.handling(e);
                 return false;
             }
             return true;

@@ -13,7 +13,7 @@ import java.awt.event.*;
 public class MainForm extends JFrame {
 
     public MainForm(String userName) {
-        setTitle("Secret");
+        setTitle("Secret "+ ConfigsUtils.getDBProperties().getProperty("ip"));
         setContentPane(mainJPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 1000);

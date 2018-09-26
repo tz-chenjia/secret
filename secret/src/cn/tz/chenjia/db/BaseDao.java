@@ -1,7 +1,9 @@
 package cn.tz.chenjia.db;
 
 import cn.tz.chenjia.rule.EDBType;
+import cn.tz.chenjia.utils.ExceptionHandleUtils;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,26 +11,37 @@ import java.util.List;
 
 public class BaseDao {
 
+    private static final Logger log = Logger.getLogger(
+            BaseDao.class
+    );
+
     // 初始化参数
     private Connection con;
     private PreparedStatement pstmt;
     private ResultSet rs;
 
     public final boolean tableExists(String tableName) {
+        log.info("检查secret表是否存在");
         boolean flag = false;
         try {
             con = JDBCUtils.getConnection();
             DatabaseMetaData meta = con.getMetaData();
-            String type[] = {"TABLE"};
-            rs = meta.getTables(null, null, tableName, type);
+            //String type[] = {"TABLE"};
+            rs = meta.getTables(null, null, tableName.toUpperCase(), null);
             flag = rs.next();
+            if(flag){
+                log.info("secret表已存在");
+            }else {
+                log.info("secret表不存在，准备创建");
+            }
         } catch (SQLException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return flag;
     }
 
     public void createTable(EDBType type, String tableName) {
+        log.info("开始创建secret表");
         String sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno int(11) NOT NULL)";
         switch (type) {
             case DB2:
@@ -36,12 +49,18 @@ public class BaseDao {
             case SQLSERVER:
                 break;
             case ORACLE:
+                sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno NUMBER(11) NOT NULL)";
                 break;
             default:
                 //mysql
                 break;
         }
-        update(sql, new Object[]{});
+        int update = update(sql, new Object[]{});
+        if(update > 0){
+            log.info("secret表创建成功");
+        }else {
+            log.warn("secret表创建失败");
+        }
     }
 
 
@@ -85,7 +104,7 @@ public class BaseDao {
                 // 7. 遍历每一行的每一列, 封装数据
                 for (int i = 0; i < columnCount; i++) {
                     // 获取每一列的列名称
-                    String columnName = rsmd.getColumnName(i + 1);
+                    String columnName = rsmd.getColumnName(i + 1).toLowerCase();
                     // 获取每一列的列名称, 对应的值
                     Object value = rs.getObject(columnName);
                     // 封装： 设置到t对象的属性中  【BeanUtils组件】
@@ -98,7 +117,8 @@ public class BaseDao {
 
             return list;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ExceptionHandleUtils.handling(e);
+            return null;
         } finally {
             JDBCUtils.close(con, pstmt, rs);
         }
@@ -131,9 +151,10 @@ public class BaseDao {
             return pstmt.executeUpdate();
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ExceptionHandleUtils.handling(e);
         } finally {
             JDBCUtils.close(con, pstmt, null);
         }
+        return -1;
     }
 }

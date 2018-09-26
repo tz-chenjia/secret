@@ -16,7 +16,7 @@ public class FileRWUtils {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                e.printStackTrace();
+                ExceptionHandleUtils.handling(e);
             }
             return false;
         }
@@ -34,7 +34,7 @@ public class FileRWUtils {
                 str.append(lineStr);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } finally {
             if (br != null) {
                 try {
@@ -47,7 +47,7 @@ public class FileRWUtils {
                 try {
                     isr.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionHandleUtils.handling(e);
                 }
             }
         }
@@ -64,20 +64,20 @@ public class FileRWUtils {
                 str.append(lineStr);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } finally {
             if (br != null) {
                 try {
                     br.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionHandleUtils.handling(e);
                 }
             }
             if (isr != null) {
                 try {
                     isr.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionHandleUtils.handling(e);
                 }
             }
         }
@@ -92,13 +92,13 @@ public class FileRWUtils {
             out.flush(); // 把缓存区内容压入文件
             out.close(); // 最后记得关闭文件
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    ExceptionHandleUtils.handling(e);
                 }
             }
         }

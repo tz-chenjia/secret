@@ -34,17 +34,17 @@ public class EncryptUtils {
             cipher.init(1, secretKeySpec);
             bytes = cipher.doFinal(data.getBytes("UTF-8"));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (BadPaddingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return Base64.encodeBase64String(bytes);
     }
@@ -60,21 +60,21 @@ public class EncryptUtils {
             cipher.init(2, secretKeySpec);
             bytes = cipher.doFinal(Base64.decodeBase64(data));
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (BadPaddingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (InvalidKeyException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         String r = null;
         try {
             r = new String(bytes, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return r;
     }
@@ -85,7 +85,7 @@ public class EncryptUtils {
             bytes = encrypted.getBytes("ISO8859-1");
             bytes = Arrays.copyOf(bytes, 16);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return Base64.encodeBase64String(bytes);
     }

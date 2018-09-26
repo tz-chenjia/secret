@@ -7,12 +7,17 @@ import cn.tz.chenjia.rule.EDBType;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.service.CmdSevrice;
 import cn.tz.chenjia.ui.configs.InputMaxLength;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class LoginForm extends JFrame {
+    private Logger logger = Logger.getLogger(LoginForm.class);
 
     public LoginForm() {
         setTitle("Secret");
@@ -90,15 +95,6 @@ public class LoginForm extends JFrame {
         });
     }
 
-    private static void fileChooser() {
-        JFileChooser chooser = new JFileChooser();
-        int returnVal = chooser.showOpenDialog(new JPanel());
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
-            System.out.println("你打开的文件是: " +
-                    chooser.getSelectedFile().getPath());
-        }
-    }
-
     private void login() {
         String dbIP = dbIPText.getText();
         String dbPort = dbPortText.getText();
@@ -123,6 +119,8 @@ public class LoginForm extends JFrame {
             if (CmdSevrice.login(userName, pwd, n)) {
                 new MainForm(userName);
                 dispose();
+                Map<String, File> files = new HashMap<String, File>();
+                //SimpleMailSender.sendMail(User.getInstance().getName(), "【Secret】", "数据备份文件在存放在附件中，请注意查收", files);
             } else {
                 JOptionPane.showMessageDialog(null, "请检查你的用户名密码及加密数字", "登录失败", JOptionPane.ERROR_MESSAGE);
             }

@@ -2,11 +2,15 @@ package cn.tz.chenjia.db;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
 import cn.tz.chenjia.rule.EDBType;
+import cn.tz.chenjia.utils.ExceptionHandleUtils;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.Properties;
 
 public class JDBCUtils {
+
+    private static final Logger log = Logger.getLogger(JDBCUtils.class);
 
     // 驱动包名和数据库url
     private static String url = null;
@@ -18,10 +22,10 @@ public class JDBCUtils {
     public static boolean isUseDB(String ip, String port, String name, String userName, String pwd, EDBType dbType, String secretName) {
         String url = buildDBUrl(EDBType.toString(dbType), ip, port, name);
         if (JDBCUtils.testConnection(url, dbType.getDriverClass(), userName, pwd) == null) {
-            System.out.println("数据库不能用");
+            log.warn( "数据库不能用,配置：{" + EDBType.toString(dbType) +"," + url  +"," + userName+"}");
             return false;
         } else {
-            System.out.println("数据库能用");
+            log.info("数据库能用,配置：{" + EDBType.toString(dbType) +"," + url +"," + userName+"}");
             ConfigsUtils.setDBProperties(EDBType.toString(dbType), name, ip, port, dbType.getDriverClass(), userName, pwd, secretName);
             return true;
         }
@@ -54,9 +58,9 @@ public class JDBCUtils {
             Class.forName(driverClass);
             conn = DriverManager.getConnection(url, userName, password);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return conn;
     }
@@ -83,9 +87,9 @@ public class JDBCUtils {
             Class.forName(driverClass);
             conn = DriverManager.getConnection(url, userName, password);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (SQLException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return conn;
     }
@@ -98,23 +102,20 @@ public class JDBCUtils {
             try {
                 rs.close();
             } catch (SQLException e1) {
-                e1.printStackTrace();
-                throw new RuntimeException(e1);
+                ExceptionHandleUtils.handling(e1);
             }
         if (stmt != null) {
             try {
                 stmt.close();
             } catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+                ExceptionHandleUtils.handling(e);
             }
         }
         if (conn != null) {
             try {
                 conn.close();
             } catch (SQLException e) {
-                e.printStackTrace();
-                throw new RuntimeException(e);
+                ExceptionHandleUtils.handling(e);
             }
         }
     }

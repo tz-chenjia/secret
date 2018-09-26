@@ -1,6 +1,7 @@
 package cn.tz.chenjia.configs;
 
 import cn.tz.chenjia.utils.EncryptUtils;
+import cn.tz.chenjia.utils.ExceptionHandleUtils;
 import cn.tz.chenjia.utils.FileRWUtils;
 
 import javax.imageio.ImageIO;
@@ -17,7 +18,7 @@ public class ConfigsUtils {
         try {
             logo = ImageIO.read(ConfigsUtils.class.getResource("logo.png"));
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         return logo;
     }
@@ -44,9 +45,9 @@ public class ConfigsUtils {
             bufferedReader = new BufferedReader(new FileReader(dbPropFile));
             properties.load(bufferedReader);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            ExceptionHandleUtils.handling(e);
         }
         if(properties.isEmpty()){
             return null;
@@ -79,9 +80,7 @@ public class ConfigsUtils {
             outputFile.close();
 
         } catch (Exception ex) {
-
-            ex.printStackTrace();
-
+            ExceptionHandleUtils.handling(ex);
         }
     }
 }
