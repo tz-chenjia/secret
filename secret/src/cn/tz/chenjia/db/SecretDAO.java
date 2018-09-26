@@ -12,24 +12,24 @@ public class SecretDAO extends BaseDao {
     }
 
     // 删除一条记录
-    public void delete(String userName, String title) {
+    public int delete(String userName, String title) {
         String sql = "delete from " + SECRET_TABLE_NAME + " where userName=? and title=?";
         Object[] paramsValue = {userName, title};
-        super.update(sql, paramsValue);
+        return super.update(sql, paramsValue);
     }
 
     // 删除该用户所有记录
-    public void deleteAllByUser(String userName) {
+    public int deleteAllByUser(String userName) {
         String sql = "delete from " + SECRET_TABLE_NAME + " where userName=? and title<>?";
         Object[] paramsValue = {userName, userName};
-        super.update(sql, paramsValue);
+        return super.update(sql, paramsValue);
     }
 
     // 删除用户及记录
-    public void deleteUser(String userName) {
+    public int deleteUser(String userName) {
         String sql = "delete from " + SECRET_TABLE_NAME + " where userName=? ";
         Object[] paramsValue = {userName};
-        super.update(sql, paramsValue);
+        return super.update(sql, paramsValue);
     }
 
     // 插入

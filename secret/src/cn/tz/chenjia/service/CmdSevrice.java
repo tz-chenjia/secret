@@ -78,7 +78,7 @@ public class CmdSevrice implements ICmdService {
     @Override
     public String loginOut() {
         User.getInstance().out();
-        return EMsg.LOGIN_OUT.toString();
+        return EMsg.OUT_OK.toString();
     }
 
     @Override
@@ -142,7 +142,12 @@ public class CmdSevrice implements ICmdService {
         int i = JOptionPane.showConfirmDialog(null, tips, "删除数据", JOptionPane.YES_NO_OPTION);
         if (i == 0) {
             if (code != null) {
-                SecretRWUtils.remove(code, User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
+                int remove = SecretRWUtils.remove(code, User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
+                if(remove > 0){
+                    return EMsg.REMOVE_OK.toString();
+                }else {
+                    return EMsg.REMOVE_FAIL.toString();
+                }
             } else {
                 SecretRWUtils.removeAll(User.getInstance().getName());
             }
@@ -178,9 +183,9 @@ public class CmdSevrice implements ICmdService {
         int i = JOptionPane.showConfirmDialog(null, tips, "格式化", JOptionPane.YES_NO_OPTION);
         if (i == 0) {
             SecretRWUtils.removeUser(User.getInstance().getName());
-            return EMsg.FORMAT_OK.toString();
+            return EMsg.OUT_OK.toString();
         } else {
-            return "";
+            return EMsg.OUT_CANCEL.toString();
         }
     }
 
@@ -224,7 +229,7 @@ public class CmdSevrice implements ICmdService {
 
         resetPwd(User.getInstance().getName(), strs[1], Integer.valueOf(strs[2]));
 
-        return EMsg.PASSWORD_OK.toString();
+        return EMsg.OUT_OK.toString();
     }
 
     private void resetPwd(String userName, String newPwd, int newN) {

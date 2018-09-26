@@ -110,7 +110,7 @@ public class BaseDao {
      * @param sql         更新的sql语句(update/insert/delete)
      * @param paramsValue sql语句中占位符对应的值(如果没有占位符，传入null)
      */
-    public void update(String sql, Object[] paramsValue) {
+    public int update(String sql, Object[] paramsValue) {
 
         try {
             // 获取连接
@@ -128,7 +128,7 @@ public class BaseDao {
                 }
             }
             // 执行更新
-            pstmt.executeUpdate();
+            return pstmt.executeUpdate();
 
         } catch (Exception e) {
             throw new RuntimeException(e);

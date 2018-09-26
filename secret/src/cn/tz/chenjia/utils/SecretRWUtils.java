@@ -41,9 +41,9 @@ public class SecretRWUtils {
         return secret;
     }
 
-    public static void remove(String title, String userName, String pwd, int n) {
+    public static int remove(String title, String userName, String pwd, int n) {
         title = EncryptUtils.encrypt(title, pwd, n);
-        secretDAO.delete(userName, title);
+        return secretDAO.delete(userName, title);
     }
 
     public static void removeAll(String userName) {

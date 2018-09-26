@@ -124,7 +124,7 @@ public class LoginForm extends JFrame {
                 new MainForm(userName);
                 dispose();
             } else {
-                JOptionPane.showMessageDialog(null, "请检查你的用户名密码及幸运数字", "登录失败", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "请检查你的用户名密码及加密数字", "登录失败", JOptionPane.ERROR_MESSAGE);
             }
         } else {
             JOptionPane.showMessageDialog(null, "数据库连接失败，请检查网络配置", "登录失败", JOptionPane.ERROR_MESSAGE);
