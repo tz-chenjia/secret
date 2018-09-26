@@ -31,6 +31,10 @@ public class SecretRWUtils {
         return secretDAO.findByName(userName);
     }
 
+    public static List<DB_Secret> readExportSQL(String userName, String pwd, int n) {
+        return secretDAO.findExportSQL(userName);
+    }
+
     public static DB_Secret readSecretByTitle(String title, String userName, String pwd, Integer n) {
         title = title.equals(userName) ? title : EncryptUtils.encrypt(title, pwd, n);
         DB_Secret secret = secretDAO.findByNameAndTitle(userName, title);
@@ -53,7 +57,7 @@ public class SecretRWUtils {
     public static void exportSQL(String userName, String pwd, int n) {
         StringBuffer sb = new StringBuffer();
         sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME + ";");
-        List<DB_Secret> db_secrets = readSecret(userName, pwd, n);
+        List<DB_Secret> db_secrets = readExportSQL(userName, pwd, n);
         for (DB_Secret secret : db_secrets) {
             sb.append("insert into " + SecretDAO.SECRET_TABLE_NAME +
                     " (username,title, content) values ('" + secret.getUsername() + "','" + secret.getTitle() + "','" + secret.getContent() + "');");

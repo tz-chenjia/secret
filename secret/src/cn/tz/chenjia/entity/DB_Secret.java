@@ -8,6 +8,8 @@ public class DB_Secret {
 
     private String content;
 
+    private int sectionno;
+
     public String getUsername() {
         return username;
     }
@@ -30,5 +32,13 @@ public class DB_Secret {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getSectionno() {
+        return sectionno;
+    }
+
+    public void setSectionno(int sectionno) {
+        this.sectionno = sectionno;
     }
 }

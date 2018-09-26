@@ -29,7 +29,7 @@ public class BaseDao {
     }
 
     public void createTable(EDBType type, String tableName) {
-        String sql = "CREATE TABLE " + tableName + " (username varchar(500) NOT NULL,title varchar(500) NOT NULL,content varchar(4000) NOT NULL)";
+        String sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno int(11) NOT NULL)";
         switch (type) {
             case DB2:
                 break;

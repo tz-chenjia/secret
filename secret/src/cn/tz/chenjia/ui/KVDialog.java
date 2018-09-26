@@ -22,6 +22,7 @@ public class KVDialog extends JDialog {
     private JScrollPane jScrollPane;
     private JPanel statusJPanel;
     private JLabel statusLabel;
+    private JLabel inputNumLabel;
     private boolean save;
 
     public KVDialog() {
@@ -37,10 +38,13 @@ public class KVDialog extends JDialog {
             @Override
             public void windowOpened(WindowEvent e) {
                 contentTextArea.setMargin(new Insets(5, 5, 5, 5));
-                contentTextArea.setDocument(new InputMaxLength(500));
-                titleText.setDocument(new InputMaxLength(40));
+                contentTextArea.setDocument(new InputMaxLength(4999));
+                titleText.setDocument(new InputMaxLength(100));
             }
         });
+
+
+
 
         saveBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -73,6 +77,13 @@ public class KVDialog extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentTextArea.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                int len = contentTextArea.getText().length() + 1;
+                inputNumLabel.setText(len  + "/5000");
+            }
+        });
     }
 
     private void onOK() {

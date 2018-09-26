@@ -27,8 +27,8 @@ public class LoginForm extends JFrame {
         super.addWindowListener(new WindowAdapter() {
             @Override
             public void windowOpened(WindowEvent e) {
-                userNameText.setDocument(new InputMaxLength(40));
-                pwdText.setDocument(new InputMaxLength(40));
+                userNameText.setDocument(new InputMaxLength(100));
+                pwdText.setDocument(new InputMaxLength(20));
 
                 pwdText.requestFocus();
                 Properties prop = ConfigsUtils.getDBProperties();
