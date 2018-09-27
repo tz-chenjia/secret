@@ -58,9 +58,9 @@ public class JDBCUtils {
             Class.forName(driverClass);
             conn = DriverManager.getConnection(url, userName, password);
         } catch (ClassNotFoundException e) {
-            ExceptionHandleUtils.handling(e);
+            log.warn(e.getMessage());
         } catch (SQLException e) {
-            ExceptionHandleUtils.handling(e);
+            log.warn(e.getMessage());
         }
         return conn;
     }

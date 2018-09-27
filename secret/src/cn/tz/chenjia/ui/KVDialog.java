@@ -1,11 +1,14 @@
 package cn.tz.chenjia.ui;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
+import cn.tz.chenjia.entity.DB_Secret;
 import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.service.CmdSevrice;
+import cn.tz.chenjia.service.Commands;
 import cn.tz.chenjia.ui.configs.InputMaxLength;
 import cn.tz.chenjia.utils.EncryptUtils;
+import cn.tz.chenjia.utils.SecretRWUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,8 +27,10 @@ public class KVDialog extends JDialog {
     private JLabel statusLabel;
     private JLabel inputNumLabel;
     private boolean save;
+    private boolean isEdit;
 
-    public KVDialog() {
+    public KVDialog(boolean isEdit, String title) {
+        this.isEdit = isEdit;
         setTitle("Secret");
         setContentPane(contentPane);
         setSize(800, 800);
@@ -40,6 +45,13 @@ public class KVDialog extends JDialog {
                 contentTextArea.setMargin(new Insets(5, 5, 5, 5));
                 contentTextArea.setDocument(new InputMaxLength(4999));
                 titleText.setDocument(new InputMaxLength(100));
+                if(isEdit){
+                    titleText.setText(title);
+                    titleText.setEditable(false);
+                    DB_Secret secret = SecretRWUtils.readSecretByTitle(title, User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
+                    String content = EncryptUtils.decrypt(secret.getContent(),User.getInstance().getPwd(), User.getInstance().getN());
+                    contentTextArea.setText(content);
+                }
             }
         });
 
@@ -92,13 +104,41 @@ public class KVDialog extends JDialog {
 
         if (title.equals("") || content.equals("")) {
             statusLabel.setText(EMsg.ERROR_KV.toString());
-        } else if (EncryptUtils.encrypt(title, User.getInstance().getPwd(), User.getInstance().getN()).equals(User.getInstance().getName())) {
+        } else if(title.indexOf(" ") != -1){
+            statusLabel.setText(EMsg.ERROR_KV5.toString());
+        }else if (EncryptUtils.encrypt(title, CmdSevrice.class.getName(), 1).equalsIgnoreCase(User.getInstance().getName())) {
             statusLabel.setText(EMsg.ERROR_KV2.toString());
-        } else {
+        } else if(checkTitleAsCmds(title)){
+            statusLabel.setText(EMsg.ERROR_KV3.toString());
+        }else if(!isEdit && checkTitleExists(title)){
+            statusLabel.setText(EMsg.ERROR_KV4.toString());
+        }else {
             CmdSevrice.updateInfo(title, content);
             save = true;
             dispose();
         }
+    }
+
+    private boolean checkTitleExists(String title){
+        boolean r = false;
+        String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(), null);
+        for(String t : titles){
+            if(t.equalsIgnoreCase(title)){
+                r = true;
+            }
+        }
+        return r;
+    }
+
+    private boolean checkTitleAsCmds(String title){
+        boolean r = false;
+        for(String cmd : Commands.cmds){
+            if(cmd.equalsIgnoreCase(title)){
+                r = true;
+                break;
+            }
+        }
+        return  r;
     }
 
     private void onCancel() {

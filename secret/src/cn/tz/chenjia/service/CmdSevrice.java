@@ -41,14 +41,14 @@ public class CmdSevrice implements ICmdService {
             case LOGINOUT:
                 r = loginOut();
                 break;
-            case LOGIN:
-                r = login();
-                break;
             case OUT:
                 r = out();
                 break;
             case PUT:
                 r = put();
+                break;
+            case EDIT:
+                r = edit();
                 break;
             case REMOVE:
                 r = remove();
@@ -81,27 +81,6 @@ public class CmdSevrice implements ICmdService {
         return EMsg.OUT_OK.toString();
     }
 
-    @Override
-    @Deprecated
-    public String login() {
-        String cmd = command.getInput();
-        String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
-        String name = strs[1];
-        String password = strs[2];
-        Integer n = Integer.valueOf(strs[3]);
-        //name = EncryptUtils.encrypt(name, password, n);
-        //password = EncryptUtils.encrypt(password, password, n);
-        if (User.getInstance().isOnline()) {
-            return EMsg.ONLINE.toString();
-        } else {
-            if (User.getInstance().login(name, password, n)) {
-                return EMsg.LOGIN_OK.toString();
-            } else {
-                return EMsg.LOGIN_NO.toString();
-            }
-        }
-    }
-
     public static boolean login(String name, String pwd, int n) {
         boolean r = false;
         name = EncryptUtils.encrypt(name, CmdSevrice.class.getName(), 1);
@@ -123,7 +102,21 @@ public class CmdSevrice implements ICmdService {
 
     @Override
     public String put() {
-        KVDialog dialog = new KVDialog();
+        KVDialog dialog = new KVDialog(false,"");
+        dialog.pack();
+        dialog.setVisible(true);
+        if (dialog.isSave()) {
+            return EMsg.SAVE_OK.toString();
+        } else {
+            return "";
+        }
+    }
+
+    @Override
+    public String edit() {
+        String cmd = command.getInput();
+        String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
+        KVDialog dialog = new KVDialog(true,strs[1]);
         dialog.pack();
         dialog.setVisible(true);
         if (dialog.isSave()) {
@@ -164,12 +157,16 @@ public class CmdSevrice implements ICmdService {
     @Override
     public String find() {
         String cmd = command.getInput();
-        String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
-        if (strs.length == 2) {
-            return findRecord(strs[1]);
-        } else {
-            return findRecord(null);
+        String title = "";
+        if(cmd.matches(ERegexp.CMD_FIND_RE.toString())){
+            String[] strs = cmd.split(ERegexp.SPACE_RE.toString());
+            if (strs.length == 2) {
+                title = strs[1];
+            }
+        }else{
+            title = cmd;
         }
+        return findRecord(title);
     }
 
     @Override
@@ -259,11 +256,17 @@ public class CmdSevrice implements ICmdService {
         SecretRWUtils.exportSQL(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN());
         Map<String, File> files = new HashMap<String, File>();
         files.put("secret.sql", SecretRWUtils.getExportSQLFile());
-        boolean b = SimpleMailSender.sendMail(User.getInstance().getName(), "【Secret】", "数据备份文件在存放在附件中，请注意查收", files);
-        if (b) {
-            return EMsg.BACKUPS_OK + EMsg.BACKUPS_EMAIL_OK.toString();
+        String tips = "是否需要发送到你的邮箱？";
+        int i = JOptionPane.showConfirmDialog(null, tips, "备份", JOptionPane.YES_NO_OPTION);
+        if (i == 0) {
+            boolean b = SimpleMailSender.sendMail(EncryptUtils.decrypt(User.getInstance().getName(), CmdSevrice.class.getName(), 1), "【Secret】", "数据备份文件已存放在附件中，请注意查收", files);
+            if (b) {
+                return EMsg.BACKUPS_OK + EMsg.BACKUPS_EMAIL_OK.toString();
+            }
+            return EMsg.BACKUPS_OK.toString() + EMsg.BACKUPS_EMAIL_FAIL;
+        }else {
+            return EMsg.BACKUPS_OK.toString();
         }
-        return EMsg.BACKUPS_OK.toString() + EMsg.BACKUPS_EMAIL_FAIL;
     }
 
 }

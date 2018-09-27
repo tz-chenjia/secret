@@ -1,10 +1,12 @@
 package cn.tz.chenjia.ui;
 
 import cn.tz.chenjia.configs.ConfigsUtils;
+import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.service.CmdSevrice;
 import cn.tz.chenjia.service.Commands;
+import cn.tz.chenjia.utils.SecretRWUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -41,7 +43,6 @@ public class MainForm extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (KeyEvent.VK_ENTER == e.getKeyCode()) {
                     String cmd = cmdText.getText().trim().toLowerCase();
-                    sessionTextArea.setText("");
                     if (cmd.matches(ERegexp.CMD_CLEAR_RE.toString())) {
                         sessionTextArea.setText("");
                     } else if (cmd.matches(ERegexp.CMD_OUT_RE.toString())) {
@@ -52,6 +53,7 @@ public class MainForm extends JFrame {
                         outLogin(r);
                     } else {
                         String r = CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
+                        sessionTextArea.setText("");
                         if (r != null && !r.equals("")) {
                             sessionTextArea.append(r + "\n");
                         }
@@ -69,20 +71,28 @@ public class MainForm extends JFrame {
         findBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String op = (String)JOptionPane.showInputDialog(null,"","输入要查找的标题",
-                        JOptionPane.QUESTION_MESSAGE);
-                if(op != null){
-                    println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f " + op)));
+                String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(),"全部");
+                Object ob = JOptionPane.showInputDialog(null, "", "选择你要查找的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
+                if(ob != null){
+                    if(!ob.equals("全部")){
+                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f " + ob)));
+                    }else{
+                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f")));
+                    }
                 }
             }
         });
         delBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String op = (String)JOptionPane.showInputDialog(null,"","输入要删除的标题",
-                        JOptionPane.QUESTION_MESSAGE);
-                if(op != null) {
-                    println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r " + op)));
+                String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(),"全部");
+                Object ob = JOptionPane.showInputDialog(null, "", "选择你要删除的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
+                if(ob != null){
+                    if(!ob.equals("全部")){
+                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r " + ob)));
+                    }else{
+                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r")));
+                    }
                 }
             }
         });
@@ -131,6 +141,16 @@ public class MainForm extends JFrame {
                 println(CmdSevrice.runCmdWithJForm(Commands.toCmd("h")));
             }
         });
+        editBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(),null);
+                Object ob = JOptionPane.showInputDialog(null, "", "选择你要修改的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
+                if(ob != null){
+                    println(CmdSevrice.runCmdWithJForm(Commands.toCmd("e " + ob)));
+                }
+            }
+        });
     }
 
     private void outLogin(String r){
@@ -164,4 +184,5 @@ public class MainForm extends JFrame {
     private JButton loginOutBtn;
     private JButton formatBtn;
     private JButton helpBtn;
+    private JButton editBtn;
 }

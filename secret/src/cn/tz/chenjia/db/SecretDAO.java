@@ -48,15 +48,25 @@ public class SecretDAO extends BaseDao {
         insert(DB_Secret);
     }
 
+    public List<String> findTitles(String userName){
+        List<String> titles = new ArrayList<String>();
+        String sql = "select title from " + SECRET_TABLE_NAME + " where username = ? and username <> title group by title";
+        List<Map<String, Object>> result = super.query(sql, new Object[]{userName});
+        for(Map<String, Object> m : result){
+            titles.add(m.get("title").toString());
+        }
+        return titles;
+    }
+
     public List<DB_Secret> findExportSQL(String userName) {
         String sql = "select * from " + SECRET_TABLE_NAME + " where username=?";
-        List<DB_Secret> list = super.query(sql, new Object[]{userName}, DB_Secret.class);
+        List<DB_Secret> list = super.queryToBean(sql, new Object[]{userName}, DB_Secret.class);
         return list;
     }
 
     public List<DB_Secret> findByName(String userName) {
         String sql = "select * from " + SECRET_TABLE_NAME + " where username=?";
-        List<DB_Secret> list = super.query(sql, new Object[]{userName}, DB_Secret.class);
+        List<DB_Secret> list = super.queryToBean(sql, new Object[]{userName}, DB_Secret.class);
         Map<String, List<DB_Secret>> map = new HashMap<String, List<DB_Secret>>();
         for(DB_Secret s : list){
             String title = s.getTitle();
@@ -88,7 +98,7 @@ public class SecretDAO extends BaseDao {
     public DB_Secret findByNameAndTitle(String userName, String title) {
         DB_Secret secret = null;
         String sql = "select * from " + SECRET_TABLE_NAME + " where username=? and title=?";
-        List<DB_Secret> list = super.query(sql, new Object[]{userName, title}, DB_Secret.class);
+        List<DB_Secret> list = super.queryToBean(sql, new Object[]{userName, title}, DB_Secret.class);
         if(list.size() > 0){
             Map<Integer, String> sections = new HashMap<Integer, String>();
             for(DB_Secret s : list){

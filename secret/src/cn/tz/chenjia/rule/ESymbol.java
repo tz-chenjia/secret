@@ -1,7 +1,7 @@
 package cn.tz.chenjia.rule;
 
 public enum ESymbol {
-    BORDER(""), BORDER2("");
+    BORDER("------------------------------------------------------------------------------------------------------------------------------------------------"), BORDER2("");
 
 
     private String symbol;

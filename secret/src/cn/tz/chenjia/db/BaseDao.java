@@ -7,7 +7,9 @@ import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BaseDao {
 
@@ -70,7 +72,7 @@ public class BaseDao {
      * @param sql
      * @param paramsValue
      */
-    public <T> List<T> query(String sql, Object[] paramsValue, Class<T> clazz) {
+    public <T> List<T> queryToBean(String sql, Object[] paramsValue, Class<T> clazz) {
 
         try {
             // 返回的集合
@@ -109,6 +111,66 @@ public class BaseDao {
                     Object value = rs.getObject(columnName);
                     // 封装： 设置到t对象的属性中  【BeanUtils组件】
                     BeanUtils.copyProperty(t, columnName, value);
+                }
+
+                // 把封装完毕的对象，添加到list集合中
+                list.add(t);
+            }
+
+            return list;
+        } catch (Exception e) {
+            ExceptionHandleUtils.handling(e);
+            return null;
+        } finally {
+            JDBCUtils.close(con, pstmt, rs);
+        }
+    }
+
+    /**
+     * 查询的通用方法
+     *
+     * @param sql
+     * @param paramsValue
+     */
+    public List<Map<String, Object>> query(String sql, Object[] paramsValue) {
+
+        try {
+            // 返回的集合
+            List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+            // 对象
+            Map<String, Object> t = null;
+
+            // 1. 获取连接
+            con = JDBCUtils.getConnection();
+            // 2. 创建stmt对象
+            pstmt = con.prepareStatement(sql);
+            // 3. 获取占位符参数的个数， 并设置每个参数的值
+            int count = pstmt.getParameterMetaData().getParameterCount();
+            if (paramsValue != null && paramsValue.length > 0) {
+                for (int i = 0; i < paramsValue.length; i++) {
+                    pstmt.setObject(i + 1, paramsValue[i]);
+                }
+            }
+            // 4. 执行查询
+            rs = pstmt.executeQuery();
+            // 5. 获取结果集元数据
+            ResultSetMetaData rsmd = rs.getMetaData();
+            // ---> 获取列的个数
+            int columnCount = rsmd.getColumnCount();
+
+            // 6. 遍历rs
+            while (rs.next()) {
+                // 要封装的对象
+                t = new HashMap<String, Object>();
+
+                // 7. 遍历每一行的每一列, 封装数据
+                for (int i = 0; i < columnCount; i++) {
+                    // 获取每一列的列名称
+                    String columnName = rsmd.getColumnName(i + 1).toLowerCase();
+                    // 获取每一列的列名称, 对应的值
+                    Object value = rs.getObject(columnName);
+                    // 封装： 设置到t对象的属性中  【BeanUtils组件】
+                    t.put(columnName, value);
                 }
 
                 // 把封装完毕的对象，添加到list集合中

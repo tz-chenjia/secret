@@ -27,6 +27,25 @@ public class SecretRWUtils {
         }
     }
 
+    public static String[] readUserTitles(String userName, String pwd, int n, String allName){
+        List<String> titles = secretDAO.findTitles(userName);
+        String [] titleArr = null;
+        if(allName != null){
+            titleArr = new String[titles.size() + 1];
+            titleArr[0] = allName;
+            for(int i = 0; i<titles.size(); i++){
+                titleArr[i+1] = EncryptUtils.decrypt(titles.get(i), pwd, n);
+            }
+        }else {
+            titleArr = new String[titles.size()];
+            for(int i = 0; i<titles.size(); i++){
+                titleArr[i] = EncryptUtils.decrypt(titles.get(i), pwd, n);
+            }
+        }
+
+        return titleArr;
+    }
+
     public static List<DB_Secret> readSecret(String userName, String pwd, int n) {
         return secretDAO.findByName(userName);
     }
@@ -56,11 +75,11 @@ public class SecretRWUtils {
 
     public static void exportSQL(String userName, String pwd, int n) {
         StringBuffer sb = new StringBuffer();
-        sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME + ";");
+        sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME + " where username = '"+userName+"';");
         List<DB_Secret> db_secrets = readExportSQL(userName, pwd, n);
         for (DB_Secret secret : db_secrets) {
             sb.append("insert into " + SecretDAO.SECRET_TABLE_NAME +
-                    " (username,title, content) values ('" + secret.getUsername() + "','" + secret.getTitle() + "','" + secret.getContent() + "');");
+                    " (username,title, content, sectionno) values ('" + secret.getUsername() + "','" + secret.getTitle() + "','" + secret.getContent() + "','" + secret.getSectionno() + "');");
         }
 
         FileRWUtils.write(getExportSQLFile(), sb.toString());

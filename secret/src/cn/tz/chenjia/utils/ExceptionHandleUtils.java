@@ -15,7 +15,7 @@ public class ExceptionHandleUtils {
         for(StackTraceElement ste : stackTrace){
             log.error(ste);
         }
-        JOptionPane.showMessageDialog(null, "Secret 系统错误，"+e.getMessage(), "系统错误", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(null, "Secret 系统错误！！看日志！！", "系统错误", JOptionPane.ERROR_MESSAGE);
         //System.exit(1);
     }
 

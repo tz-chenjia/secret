@@ -11,9 +11,6 @@ import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class LoginForm extends JFrame {
@@ -119,8 +116,6 @@ public class LoginForm extends JFrame {
             if (CmdSevrice.login(userName, pwd, n)) {
                 new MainForm(userName);
                 dispose();
-                Map<String, File> files = new HashMap<String, File>();
-                //SimpleMailSender.sendMail(User.getInstance().getName(), "【Secret】", "数据备份文件在存放在附件中，请注意查收", files);
             } else {
                 JOptionPane.showMessageDialog(null, "请检查你的用户名密码及加密数字", "登录失败", JOptionPane.ERROR_MESSAGE);
             }
