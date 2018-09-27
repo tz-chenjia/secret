@@ -72,13 +72,17 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(),"全部");
-                Object ob = JOptionPane.showInputDialog(null, "", "选择你要查找的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
-                if(ob != null){
-                    if(!ob.equals("全部")){
-                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f " + ob)));
-                    }else{
-                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f")));
+                if(titles.length > 1){
+                    Object ob = JOptionPane.showInputDialog(null, "", "选择你要查找的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
+                    if(ob != null){
+                        if(!ob.equals("全部")){
+                            println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f " + ob)));
+                        }else{
+                            println(CmdSevrice.runCmdWithJForm(Commands.toCmd("f")));
+                        }
                     }
+                }else {
+                    sessionTextArea.setText(EMsg.INFO_NOT.toString());
                 }
             }
         });
@@ -86,13 +90,17 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(),"全部");
-                Object ob = JOptionPane.showInputDialog(null, "", "选择你要删除的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
-                if(ob != null){
-                    if(!ob.equals("全部")){
-                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r " + ob)));
-                    }else{
-                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r")));
+                if(titles.length > 1){
+                    Object ob = JOptionPane.showInputDialog(null, "", "选择你要删除的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
+                    if(ob != null){
+                        if(!ob.equals("全部")){
+                            println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r " + ob)));
+                        }else{
+                            println(CmdSevrice.runCmdWithJForm(Commands.toCmd("r")));
+                        }
                     }
+                }else {
+                    sessionTextArea.setText(EMsg.INFO_NOT.toString());
                 }
             }
         });
@@ -145,9 +153,13 @@ public class MainForm extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] titles = SecretRWUtils.readUserTitles(User.getInstance().getName(), User.getInstance().getPwd(), User.getInstance().getN(),null);
-                Object ob = JOptionPane.showInputDialog(null, "", "选择你要修改的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
-                if(ob != null){
-                    println(CmdSevrice.runCmdWithJForm(Commands.toCmd("e " + ob)));
+                if(titles.length > 0){
+                    Object ob = JOptionPane.showInputDialog(null, "", "选择你要修改的", JOptionPane.QUESTION_MESSAGE, null, titles, titles[0]);
+                    if(ob != null){
+                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd("e " + ob)));
+                    }
+                }else{
+                    sessionTextArea.setText(EMsg.INFO_NOT.toString());
                 }
             }
         });
