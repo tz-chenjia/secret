@@ -59,13 +59,13 @@
 
 	备		备份数据 BACKUPS                                     
 
-			 获取本地备份路径 FILEPATH				 
+			获取本地备份路径 FILEPATH				 
 
 	格		格式化全部数据 FORMAT          				 
 
 	退		退出登录 LOGINOUT             					 
 
-			 退出系统 OUT
+			退出系统 OUT
 
 	帮		查看帮助信息 HELP              					 
 
