@@ -57,7 +57,9 @@
 
 	密		修改密码及加密数字 PASSWORD                  
 
-	备		备份数据 BACKUPS                                     
+	备		备份数据 BACKUPS
+	
+    覆		覆盖数据 COVER
 
 			获取本地备份路径 FILEPATH				 
 
