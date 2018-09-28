@@ -24,4 +24,6 @@ public interface ICmdService {
 
     String backups();
 
+    String cover();
+
 }

@@ -7,10 +7,12 @@ import cn.tz.chenjia.entity.User;
 import cn.tz.chenjia.rule.EMsg;
 import cn.tz.chenjia.rule.ERegexp;
 import cn.tz.chenjia.rule.ESymbol;
+import cn.tz.chenjia.ui.FileChooser;
 import cn.tz.chenjia.ui.KVDialog;
 import cn.tz.chenjia.utils.EncryptUtils;
 import cn.tz.chenjia.utils.SecretRWUtils;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.log4j.Logger;
 
 import javax.swing.*;
 import java.io.File;
@@ -19,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 
 public class CmdSevrice implements ICmdService {
+
+    private static final Logger log = Logger.getLogger(CmdSevrice.class);
 
     private Commands command;
 
@@ -64,6 +68,9 @@ public class CmdSevrice implements ICmdService {
                 break;
             case BACKUPS:
                 r = backups();
+                break;
+            case COVER:
+                r = cover();
                 break;
             case PASSWORD:
                 r = password();
@@ -266,6 +273,24 @@ public class CmdSevrice implements ICmdService {
             return EMsg.BACKUPS_OK.toString() + EMsg.BACKUPS_EMAIL_FAIL;
         }else {
             return EMsg.BACKUPS_OK.toString();
+        }
+    }
+
+    @Override
+    public String cover() {
+        JOptionPane.showMessageDialog(null,EMsg.IMP_TIPS);
+        File file = FileChooser.fileChooser();
+        if(file != null){
+            if(SecretRWUtils.importSQL(file)){
+                JOptionPane.showMessageDialog(null,EMsg.IMP_OK);
+                return EMsg.OUT_OK.toString();
+            }else {
+                JOptionPane.showMessageDialog(null,EMsg.IMP_FAILS);
+                log.warn(EMsg.IMP_FAILS);
+                return EMsg.OUT_CANCEL.toString();
+            }
+        }else {
+            return EMsg.OUT_CANCEL.toString();
         }
     }
 

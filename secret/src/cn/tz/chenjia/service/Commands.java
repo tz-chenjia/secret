@@ -8,11 +8,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Commands {
-    LOGINOUT, OUT, PUT, EDIT, REMOVE, FIND, CLEAR, FILEPATH, FORMAT, PASSWORD, BACKUPS, HELP;
+    LOGINOUT, OUT, PUT, EDIT, REMOVE, FIND, CLEAR, FILEPATH, FORMAT, PASSWORD, BACKUPS, COVER, HELP;
 
     private String input;
 
-    public static List<String> cmds = new ArrayList<>(Arrays.asList("lo","loginout","o","out","p","put","e","edit","r","remove","f","find","c","clear","fp","filepath","format","password","b","backups","h","help"));
+    public static List<String> cmds = new ArrayList<>(Arrays.asList("lo","loginout","o","out","p","put","e","edit","r","remove","f","find","c","clear","fp","filepath","format","password","b","backups","cover","h","help"));
 
     public static Commands toCmd(String input) {
         Commands cmd = resolveCmd(input);
@@ -47,6 +47,8 @@ public enum Commands {
             return PASSWORD;
         } else if (input.matches(ERegexp.CMD_BACKUPS_RE.toString())) {
             return BACKUPS;
+        } else if (input.matches(ERegexp.CMD_COVER_RE.toString())) {
+            return COVER;
         }
         return onlineCmd(FIND);
     }

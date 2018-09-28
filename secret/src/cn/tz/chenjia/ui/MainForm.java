@@ -50,15 +50,12 @@ public class MainForm extends JFrame {
                     } else if (cmd.matches(ERegexp.CMD_OUT_RE.toString())) {
                         dispose();
                         System.exit(1);
-                    } else if (cmd.matches(ERegexp.CMD_LOGINOUT_RE.toString()) || cmd.matches(ERegexp.CMD_FORMAT_RE.toString()) || cmd.matches(ERegexp.CMD_PASSWORD_RE.toString())) {
+                    } else if (cmd.matches(ERegexp.CMD_LOGINOUT_RE.toString()) || cmd.matches(ERegexp.CMD_FORMAT_RE.toString())
+                            || cmd.matches(ERegexp.CMD_PASSWORD_RE.toString()) || cmd.matches(ERegexp.CMD_COVER_RE.toString())) {
                         String r = CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
                         outLogin(r);
                     } else {
-                        String r = CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd));
-                        sessionTextArea.setText("");
-                        if (r != null && !r.equals("")) {
-                            sessionTextArea.append(r + "\n");
-                        }
+                        println(CmdSevrice.runCmdWithJForm(Commands.toCmd(cmd)));
                     }
                     cmdText.setText("");
                 }
@@ -84,7 +81,7 @@ public class MainForm extends JFrame {
                         }
                     }
                 }else {
-                    sessionTextArea.setText(EMsg.INFO_NOT.toString());
+                    println(EMsg.INFO_NOT.toString());
                 }
             }
         });
@@ -102,7 +99,7 @@ public class MainForm extends JFrame {
                         }
                     }
                 }else {
-                    sessionTextArea.setText(EMsg.INFO_NOT.toString());
+                    println(EMsg.INFO_NOT.toString());
                 }
             }
         });
@@ -161,8 +158,14 @@ public class MainForm extends JFrame {
                         println(CmdSevrice.runCmdWithJForm(Commands.toCmd("e " + ob)));
                     }
                 }else{
-                    sessionTextArea.setText(EMsg.INFO_NOT.toString());
+                    println(EMsg.INFO_NOT.toString());
                 }
+            }
+        });
+        syncBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                outLogin(CmdSevrice.runCmdWithJForm(Commands.toCmd("cover")));
             }
         });
     }
@@ -199,4 +202,5 @@ public class MainForm extends JFrame {
     private JButton formatBtn;
     private JButton helpBtn;
     private JButton editBtn;
+    private JButton syncBtn;
 }

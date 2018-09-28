@@ -81,8 +81,41 @@ public class SecretRWUtils {
             sb.append("insert into " + SecretDAO.SECRET_TABLE_NAME +
                     " (username,title, content, sectionno) values ('" + secret.getUsername() + "','" + secret.getTitle() + "','" + secret.getContent() + "','" + secret.getSectionno() + "');\n");
         }
-        sb.append("commit;");
         FileRWUtils.write(getExportSQLFile(), sb.toString());
+    }
+
+    public static boolean importSQL(File file){
+        boolean r;
+        if (file != null) {
+            String sqlStr = FileRWUtils.read(file);
+            String[] sqls = sqlStr.split(";");
+            if(simpleCheckSql(sqls)){
+                for(String sql : sqls){
+                    secretDAO.update(sql, new Object[]{});
+                }
+                r = true;
+            }else {
+                r = false;
+            }
+        }else {
+            r = false;
+        }
+        return r;
+    }
+
+    private static boolean simpleCheckSql(String[] sqls) {
+        boolean r = true;
+        if (sqls.length > 0) {
+            for (String sql : sqls) {
+                if (!sql.contains(SecretDAO.SECRET_TABLE_NAME)) {
+                    r = false;
+                    break;
+                }
+            }
+        }else {
+            r = false;
+        }
+        return r;
     }
 
     public static File getExportSQLFile() {
