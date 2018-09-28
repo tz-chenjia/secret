@@ -44,14 +44,14 @@ public class BaseDao {
 
     public void createTable(EDBType type, String tableName) {
         log.info("开始创建secret表");
-        String sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno int(11) NOT NULL)";
+        String sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno int NOT NULL)";
         switch (type) {
             case DB2:
                 break;
             case SQLSERVER:
                 break;
             case ORACLE:
-                sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno NUMBER(11) NOT NULL)";
+                sql = "CREATE TABLE " + tableName + " (username varchar(1000) NOT NULL,title varchar(1000) NOT NULL,content varchar(1500) NOT NULL,sectionno NUMBER NOT NULL)";
                 break;
             default:
                 //mysql

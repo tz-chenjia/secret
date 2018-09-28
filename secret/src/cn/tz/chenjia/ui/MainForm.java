@@ -11,11 +11,13 @@ import cn.tz.chenjia.utils.SecretRWUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Properties;
 
 public class MainForm extends JFrame {
 
     public MainForm(String userName) {
-        setTitle("Secret "+ ConfigsUtils.getDBProperties().getProperty("ip"));
+        Properties prop = ConfigsUtils.getDBProperties();
+        setTitle("Secret    "+ prop.getProperty("ip") +":"+ prop.getProperty("port") +"    "+ prop.getProperty("type"));
         setContentPane(mainJPanel);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1200, 1000);
@@ -113,7 +115,7 @@ public class MainForm extends JFrame {
                 if(newPwd != null){
                     Object ob = JOptionPane.showInputDialog(null, "", "选择加密数字", JOptionPane.QUESTION_MESSAGE, null, n, n[0]);
                     if(ob != null) {
-                        String r = CmdSevrice.runCmdWithJForm(Commands.toCmd("p " + newPwd + " " + Integer.valueOf(ob.toString())));
+                        String r = CmdSevrice.runCmdWithJForm(Commands.toCmd("password " + newPwd + " " + Integer.valueOf(ob.toString())));
                         outLogin(r);
                     }
                 }

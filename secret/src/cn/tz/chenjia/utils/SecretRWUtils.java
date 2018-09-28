@@ -75,13 +75,13 @@ public class SecretRWUtils {
 
     public static void exportSQL(String userName, String pwd, int n) {
         StringBuffer sb = new StringBuffer();
-        sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME + " where username = '"+userName+"';");
+        sb.append("delete from " + SecretDAO.SECRET_TABLE_NAME + " where username = '"+userName+"';\n");
         List<DB_Secret> db_secrets = readExportSQL(userName, pwd, n);
         for (DB_Secret secret : db_secrets) {
             sb.append("insert into " + SecretDAO.SECRET_TABLE_NAME +
-                    " (username,title, content, sectionno) values ('" + secret.getUsername() + "','" + secret.getTitle() + "','" + secret.getContent() + "','" + secret.getSectionno() + "');");
+                    " (username,title, content, sectionno) values ('" + secret.getUsername() + "','" + secret.getTitle() + "','" + secret.getContent() + "','" + secret.getSectionno() + "');\n");
         }
-
+        sb.append("commit;");
         FileRWUtils.write(getExportSQLFile(), sb.toString());
     }
 

@@ -198,7 +198,7 @@ public class CmdSevrice implements ICmdService {
                 if (code == null || code.equals("")) {
                     result = result.equals("") ? result : result + "\n" + ESymbol.BORDER + "\n";
                     result += "【" + t + "】";
-                } else if (t.toLowerCase().contains(code)) {
+                } else if (containsIgnoreCase(t,code)) {
                     result = result.equals("") ? result : result + "\n" + ESymbol.BORDER + "\n";
                     result += "【" + t + "】\n\n" + c;
                 }
@@ -259,7 +259,7 @@ public class CmdSevrice implements ICmdService {
         String tips = "是否需要发送到你的邮箱？";
         int i = JOptionPane.showConfirmDialog(null, tips, "备份", JOptionPane.YES_NO_OPTION);
         if (i == 0) {
-            boolean b = SimpleMailSender.sendMail(EncryptUtils.decrypt(User.getInstance().getName(), CmdSevrice.class.getName(), 1), "【Secret】", "数据备份文件已存放在附件中，请注意查收", files);
+            boolean b = SimpleMailSender.sendMail(EncryptUtils.decrypt(User.getInstance().getName(), CmdSevrice.class.getName(), 1), "【Secret】", "数据备份文件已存放在附件中，请注意查收，祝您生活愉快！", files);
             if (b) {
                 return EMsg.BACKUPS_OK + EMsg.BACKUPS_EMAIL_OK.toString();
             }
@@ -267,6 +267,13 @@ public class CmdSevrice implements ICmdService {
         }else {
             return EMsg.BACKUPS_OK.toString();
         }
+    }
+
+    private boolean containsIgnoreCase(String v1, String v2){
+        boolean r = false;
+        v1 = v1.toLowerCase();
+        v2 = v2.toLowerCase();
+        return v1.contains(v2);
     }
 
 }
